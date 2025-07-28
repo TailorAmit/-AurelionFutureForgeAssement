@@ -3,10 +3,11 @@ import { CustomHeaderProps } from "../../types";
 import { ArrowLeft, ChevronRight, MapPin, Share2 } from "lucide-react-native";
 
 export const CustomHeader: React.FC<CustomHeaderProps> = ({
-  title = 'Title',
+  title,
   onBack,
   onShare,
-  locationSubtitle
+  locationSubtitle,
+  locationSubtitleHandler
 }) => {
   return (
     <View style={styles.container}>
@@ -31,7 +32,7 @@ export const CustomHeader: React.FC<CustomHeaderProps> = ({
 
       </View>
       {locationSubtitle ?
-        <View style={styles.locationConatiner}>
+        <TouchableOpacity style={styles.locationConatiner} onPress={() => locationSubtitleHandler()}>
           <Text style={styles.locationIcon}>
             <MapPin size={12} color="#330411" />
           </Text>
@@ -39,7 +40,7 @@ export const CustomHeader: React.FC<CustomHeaderProps> = ({
           <Text style={styles.locationRightIcon}>
             <ChevronRight size={10} color="#330411" />
           </Text>
-        </View>
+        </TouchableOpacity>
         : null}
     </View>
   );
@@ -47,8 +48,10 @@ export const CustomHeader: React.FC<CustomHeaderProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
+    paddingHorizontal: 16,
+    backgroundColor: 'transparent',
     flexDirection: 'column',
+    paddingVertical: 10
   },
   locationIcon: {
     marginRight: 8

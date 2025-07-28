@@ -7,21 +7,23 @@ import RestaurantCard from '../../components/RestaurantCard';
 import { hasNotch } from '../../utils/index';
 import { Matrics } from '../../utils/matrics';
 import CouponCard from '../../components/CouponCard';
+import { COMMON_STRING } from '~/app/constants/constants-strings';
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }: { navigation: any }) => {
     const [query, setQuery] = useState('');
     const handlePress = (label: string) => {
         console.log(`${label} tab pressed`);
     };
 
     return (
-        <View style={{ flex: 1, paddingTop: hasNotch ? Matrics.vs30 : 0, }}>
+        <View style={{ flex: 1, paddingTop: hasNotch ? Matrics.vs30 : 0, backgroundColor: '#fff' }}>
+            <CustomHeader
+                title="Merchants"
+                locationSubtitle='Update Your Location'
+                locationSubtitleHandler={() => navigation.navigate(COMMON_STRING.STACK_STRING.SEARCH_LOCATION)}
+            />
             <ScrollView>
                 <View style={{ paddingHorizontal: 16 }}>
-                    <CustomHeader
-                        title="Merchants"
-                        locationSubtitle='Update Your Location'
-                    />
                     <View>
                         <SearchBar value={query} onChangeText={setQuery} />
                     </View>
@@ -34,30 +36,13 @@ const HomeScreen = () => {
                         </ScrollView>
                     </View>
                     <View style={{ marginTop: 16 }}>
-                        <CouponCard
-                            brandName="Swiggy"
-                            discountText="Get upto 20% off"
-                            description="on Breakfast and lunch by pasting this code before Ordering"
-                            code="PRIYA777REF"
-                            expiry="3 Days"
-                            logoUrl="https://upload.wikimedia.org/wikipedia/en/1/12/Swiggy_logo.svg"
-                        />
-                        <CouponCard
-                            brandName="Swiggy"
-                            discountText="Get upto 20% off"
-                            description="on Breakfast and lunch by pasting this code before Ordering"
-                            code="PRIYA777REF"
-                            expiry="3 Days"
-                            logoUrl="https://upload.wikimedia.org/wikipedia/en/1/12/Swiggy_logo.svg"
-                        />
-                    </View>
-                    <View style={{ marginTop: 16 }}>
                         <RestaurantCard
                             imageUrl="https://media-cdn.tripadvisor.com/media/photo-l/0d/5d/72/c9/romantic-table-at-restaurant.jpg"
                             rating={4.5}
                             location="Priya’s House, Saravanampatti, Coimbatore"
                             name="Green Leaf Restaurant"
                             type="Hotel & Restaurant"
+                            goDetailPage={() => navigation.navigate(COMMON_STRING.STACK_STRING.RESTAURANT_DETAIL)}
                         />
                         <RestaurantCard
                             imageUrl="https://media-cdn.tripadvisor.com/media/photo-l/0d/5d/72/c9/romantic-table-at-restaurant.jpg"
@@ -65,6 +50,7 @@ const HomeScreen = () => {
                             location="Priya’s House, Saravanampatti, Coimbatore"
                             name="Green Leaf Restaurant"
                             type="Hotel & Restaurant"
+                            goDetailPage={() => navigation.navigate(COMMON_STRING.STACK_STRING.RESTAURANT_DETAIL)}
                         />
                         <RestaurantCard
                             imageUrl="https://media-cdn.tripadvisor.com/media/photo-l/0d/5d/72/c9/romantic-table-at-restaurant.jpg"
@@ -72,6 +58,7 @@ const HomeScreen = () => {
                             location="Priya’s House, Saravanampatti, Coimbatore"
                             name="Green Leaf Restaurant"
                             type="Hotel & Restaurant"
+                            goDetailPage={() => navigation.navigate(COMMON_STRING.STACK_STRING.RESTAURANT_DETAIL)}
                         />
                     </View>
 
@@ -84,7 +71,7 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'transparent',
+        backgroundColor: '#fff',
     },
 });
 

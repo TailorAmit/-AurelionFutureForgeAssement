@@ -6,7 +6,6 @@ import { AppNavScreens } from '~/app/constants/AppNavScreens';
 const Stack = createNativeStackNavigator();
 
 export const StackNavigation = () => {
-    console.log("AppNavScreens[0]?.name", AppNavScreens[0]?.name)
     return (
         <Stack.Navigator
             initialRouteName={AppNavScreens[0]?.name}

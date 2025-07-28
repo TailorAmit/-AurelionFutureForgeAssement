@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, Touchable, TouchableOpacity } from 'react-native';
 import { Star, MapPin } from 'lucide-react-native';
 
 type Props = {
@@ -8,6 +8,7 @@ type Props = {
     location: string;
     name: string;
     type: string;
+    goDetailPage: () => void
 };
 
 const RestaurantCard: React.FC<Props> = ({
@@ -16,9 +17,10 @@ const RestaurantCard: React.FC<Props> = ({
     location,
     name,
     type,
+    goDetailPage
 }) => {
     return (
-        <View style={styles.card}>
+        <TouchableOpacity style={styles.card} onPress={goDetailPage}>
             <ImageBackground
                 source={{ uri: imageUrl }}
                 style={styles.image}
@@ -42,7 +44,7 @@ const RestaurantCard: React.FC<Props> = ({
                     <Text style={styles.subtitle}>{type}</Text>
                 </View>
             </View>
-        </View>
+        </TouchableOpacity>
     );
 };
 

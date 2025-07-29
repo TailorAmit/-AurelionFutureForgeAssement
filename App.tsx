@@ -89,7 +89,6 @@ function App() {
       if (notification.userInteraction) {
         try {
           const currentUrl = await AsyncStorage.getItem("WebViewURL") || "";
-          debugger
         } catch (error) {
           console.log("🫧 ~ file: App.tsx:117 ~ error:->", error)
         }

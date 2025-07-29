@@ -54,6 +54,7 @@ const RibbonWithNotches = () => {
     );
 };
 
+
 type CouponCardProps = {
     brandName: string;
     discountText: string;
@@ -131,6 +132,7 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 25,
         borderBottomRightRadius: 25,
         backgroundColor: '#fff',
+        height: 300
     },
     header: {
         flexDirection: 'row',
@@ -225,12 +227,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     ribbonTopBar: {
-        height: 40,
+        height: 50,
         width: '100%',
         borderTopLeftRadius: 16,
     },
     ribbonBottomBar: {
-        height: 40,
+        height: 50,
         width: '100%',
         borderBottomLeftRadius: 16,
     },

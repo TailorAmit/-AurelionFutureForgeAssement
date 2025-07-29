@@ -11,11 +11,33 @@ import { ArrowLeft, Star } from 'lucide-react-native';
 import { hasNotch } from '@core-utils/index';
 import { Matrics } from '@core-utils/matrics';
 import { CustomHeader } from '@components/header';
+import { useMerchantStore } from '~/app/store/store';
+import Avatar from '@components/Avtar';
+import { useMerchantActions } from '~/app/store/Action';
 
-const AddAndEditReviewScreen = ({ navigation }: any) => {
-    const [rating, setRating] = useState(4);
+const AddAndEditReviewScreen = ({ navigation, route }: any) => {
+    const [rating, setRating] = useState(0);
     const [review, setReview] = useState('');
+    const [errors, setErrors] = useState<string[]>([]);
+
+    const merchant_id = route?.params?.merchant_id
+
+    console.log("route", route?.params?.merchant_id)
+
     const maxChars = 500;
+
+    const { Logindetails, loading, error } = useMerchantStore();
+
+    const { AddReviewData } = useMerchantActions();
+
+    const handlesubmitData = async () => {
+        if (!review) {
+            setErrors(['Please Enter a Review']);
+            return;
+        }
+        await AddReviewData({ user_rating: rating, user_review_text: review }, merchant_id);
+        navigation.goBack();
+    };
 
     return (
         <View style={{ flex: 1, paddingTop: hasNotch ? Matrics.vs30 : 0, backgroundColor: '#fff' }}>
@@ -28,8 +50,13 @@ const AddAndEditReviewScreen = ({ navigation }: any) => {
 
                 {/* User Row */}
                 <View style={styles.userRow}>
-                    <View style={styles.avatar} />
-                    <Text style={styles.userName}>Priya</Text>
+                    <Avatar
+                        name={Logindetails?.data?.name}
+                        image={Logindetails?.data?.profile_image || ''}
+                        size={37}
+                    />
+                    {/* <View style={styles.avatar} /> */}
+                    <Text style={styles.userName}>{Logindetails?.data?.name}</Text>
                 </View>
 
                 {/* Stars */}
@@ -61,8 +88,19 @@ const AddAndEditReviewScreen = ({ navigation }: any) => {
                     <Text style={styles.charCount}>{`${review.length}/${maxChars}`}</Text>
                 </View>
 
+                {/* Errors */}
+                {errors.length > 0 && (
+                    <View style={styles.errorContainer}>
+                        {errors.map((error, index) => (
+                            <Text key={index} style={styles.errorText}>
+                                {error}
+                            </Text>
+                        ))}
+                    </View>
+                )}
+
                 {/* Submit Button */}
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity style={styles.button} onPress={handlesubmitData}>
                     <Text style={styles.buttonText}>Post Review</Text>
                 </TouchableOpacity>
             </View>
@@ -73,6 +111,13 @@ const AddAndEditReviewScreen = ({ navigation }: any) => {
 export default AddAndEditReviewScreen;
 
 const styles = StyleSheet.create({
+    errorContainer: {
+        marginTop: 0,
+    },
+    errorText: {
+        color: 'red',
+        fontSize: 16,
+    },
     container: {
         flex: 1,
         backgroundColor: '#fff',

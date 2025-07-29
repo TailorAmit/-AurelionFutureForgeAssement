@@ -7,6 +7,7 @@ import {
     ScrollView,
     StyleSheet,
     ActivityIndicator,
+    Platform,
 } from 'react-native';
 import {
     ArrowLeft,
@@ -28,6 +29,8 @@ import ReviewCard from '@components/ReviewCard';
 import { COMMON_STRING } from '~/app/constants/constants-strings';
 import { useMerchantStore } from '~/app/store/store';
 import { useMerchantActions } from '~/app/store/Action';
+import { Linking } from 'react-native';
+
 
 const ratingsData = {
     average: 4.5,
@@ -50,28 +53,30 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
     const maxCount = Math.max(...Object.values(ratingsData.breakdown));
 
     const { loading, error, merchant } = useMerchantStore();
-    const { fetchbyidMerchantDetail } = useMerchantActions();
+    const { fetchbyidMerchantDetail, fetchbyidMerchantCouponsData, fetchbyidMerchantReviewData } = useMerchantActions();
 
+    const openMaps = (outletLocation: string) => {
+        const url = Platform.select({
+            ios: `http://maps.apple.com/?daddr=${encodeURIComponent(outletLocation)}`,
+            android: `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(outletLocation)}`,
+        });
+        Linking.openURL(url as string).catch(err => console.error('An error occurred', err));
+    };
 
+    const callDetailsApi = async (merchant_id: string) => {
+        await fetchbyidMerchantDetail(merchant_id)
+        await fetchbyidMerchantCouponsData(merchant_id)
+        await fetchbyidMerchantReviewData(merchant_id)
+    };
 
     useEffect(() => {
-        debugger
         const merchant_id = route?.params?.item?.merchant_id || ''
-        debugger
-        fetchbyidMerchantDetail(merchant_id)
-            .then(() => {
-                console.log('Merchant loaded');
-            })
-            .catch((err) => {
-                // console.warn('Failed to load:', err);
-            });
+        callDetailsApi(merchant_id)
     }, []);
 
+    console.log('merchant', merchant);
 
-    console.log("merchant", merchant)
-    console.log("error", error)
-
-
+    const category = merchant?.category?.map((item: any) => item?.category_name).join(', ');
 
     return (
         <View style={{ flex: 1, paddingTop: hasNotch ? Matrics.vs30 : 0, backgroundColor: '#fff' }}>
@@ -80,7 +85,7 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
                 onShare={() => console.log('Share')}
             />
             {loading && <ActivityIndicator />}
-            {!error ? <Text style={styles.errorText}>{error}</Text> :
+            {error ? <Text style={styles.errorText}>{error}</Text> :
                 <ScrollView style={styles.container}>
                     {/* Header Icons */}
                     <ImageSlider Data={images} />
@@ -92,7 +97,7 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
                                     <LayoutPanelLeft size={12} color="#f59e0b" />
                                 </Text>
                                 <Text style={styles.categoryText}>
-                                    Hotels & Restaurant
+                                    {category}
                                 </Text>
                             </View>
                             <View style={styles.rating}>
@@ -100,14 +105,19 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
                                     <Star size={12} color="#f59e0b" />
                                 </Text>
                                 <Text style={styles.ratingText}>
-                                    4.5 (244 Reviews)
+                                    {merchant?.avg_rating} ({merchant?.total_review_count} Reviews)
                                 </Text>
                             </View>
                             <View style={styles.dottedLineHorizontal} />
                             <View style={styles.restaurantInfo} >
-                                <View style={styles.avatarPlaceholder} />
+                                <View style={styles.avatarPlaceholder} >
+                                    <Image
+                                        source={{ uri: merchant?.merchant_logo || '' }}
+                                        style={styles.avatar}
+                                    />
+                                </View>
                                 <View>
-                                    <Text style={styles.title}>Green Leaf Restaurant</Text>
+                                    <Text style={styles.title}>{merchant?.merchant_name || ''}</Text>
                                     <View style={styles.locationContainer}>
                                         <MapPin size={12} color="#330411" style={{ marginRight: 8 }} />
                                         <Text style={styles.location}>Saravanampatti , Coimbatore</Text>
@@ -120,29 +130,29 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
 
                         {/* Action Buttons */}
                         <View style={styles.actionRow}>
-                            <TouchableOpacity style={styles.actionButton}>
+                            <TouchableOpacity style={styles.actionButton} onPress={() => Linking.openURL(`tel:${merchant?.outlet?.outlet_phone_number}`)}>
                                 <Phone size={20} color="#e91e63" />
                                 <Text style={styles.actionText}>Call</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.actionButton}>
+                            <TouchableOpacity style={styles.actionButton}
+                                onPress={() => openMaps(merchant?.outlet?.outlet_loction_name)}>
                                 <LocateFixed size={20} color="#e91e63" />
                                 <Text style={styles.actionText}>Locate Me</Text>
                             </TouchableOpacity>
                         </View>
-                        <TouchableOpacity style={styles.websiteButton}>
+                        <TouchableOpacity style={styles.websiteButton} onPress={() => Linking.openURL(merchant?.outlet?.outlet_loction_url)} >
                             <Globe size={20} color="#e91e63" />
                             <Text style={styles.websiteText}>View the website</Text>
                         </TouchableOpacity>
 
                         <View style={styles.dottedLineHorizontal} />
 
-
                         {/* About Section */}
                         <View style={styles.section}>
                             <Text style={styles.sectionTitle}>About</Text>
                             <View style={{ marginTop: 16 }}>
                                 <Text style={styles.paragraph}>
-                                    The Green Leaf Hotel is a modern 4-star hotel located in the city center. It offers comfortable rooms with Wi-Fi, air conditioning, and 24/7 room service. Guests can enjoy delicious meals at the in-house restaurant and rooftop café. Facilities include a swimming pool, gym, and spa for relaxation. The hotel also provides business meeting spaces and airport transfers. Friendly staff.
+                                    {merchant?.merchant_description}
                                 </Text>
                             </View>
                         </View>
@@ -192,13 +202,14 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
                                         onDelete={() => console.log('Delete')}
                                     />
                                     <View style={styles.dottedLineHorizontal} />
-
                                 </View>
 
                                 <View style={styles.container}>
-                                    <View style={styles.headerRow}>
+                                    <View style={[styles.headerRow, { marginTop: 20 }]}>
                                         <Text style={styles.title}>Ratings and Reviews</Text>
-                                        <TouchableOpacity>
+                                        <TouchableOpacity onPress={() => navigation.navigate(COMMON_STRING.STACK_STRING.ADD_AND_EDIT_REVIEW, {
+                                            merchant_id: merchant?.merchant_id
+                                        })}>
                                             <Text style={styles.addReview}>Add Review</Text>
                                         </TouchableOpacity>
                                     </View>
@@ -272,12 +283,18 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
                         </View>
                     </View>
                 </ScrollView>}
-        </View>
+        </View >
     );
 }
 
 
 const styles = StyleSheet.create({
+    avatar: {
+        width: "100%",
+        height: "100%",
+        borderRadius: 16,
+        marginRight: 8,
+    },
     bottomLine: {
         height: 1,
         backgroundColor: '#DBDBDB',

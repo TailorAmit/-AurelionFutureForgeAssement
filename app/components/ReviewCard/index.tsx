@@ -32,7 +32,6 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
 }) => {
     return (
         <View style={[styles.card, isUserReview && styles.cardWithBorder]}>
-            {/* Header Row */}
             <View style={styles.headerRow}>
                 <View style={styles.avatar} />
                 <View style={{ flex: 1 }}>
@@ -78,10 +77,8 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
                 ))}
             </View>
 
-            {/* Review Text */}
             <Text style={styles.reviewText}>{review}</Text>
 
-            {/* Bottom Line */}
             <View style={styles.bottomLine} />
         </View>
     );
@@ -97,8 +94,6 @@ const styles = StyleSheet.create({
         marginBottom: 16,
     },
     cardWithBorder: {
-        // borderBottomWidth: 1,
-        // borderBottomColor: '#f8b8cf',
         paddingBottom: 12,
     },
     headerRow: {

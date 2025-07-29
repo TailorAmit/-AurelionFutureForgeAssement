@@ -9,13 +9,7 @@ interface CommonStringProps {
         };
         TAB_STRING: {
                 HOME: string;
-                // PEOPLE: string;
-                // SHIFT: string;
-                // FOOD: string;
-                // PROFILE: string;
-                // BOOK_MY_LEAVE: string;
-                // CREATE_BOOK_MY_LEAVE: string;
-                // MY_OBJECTIVE: string;
+
         };
 }
 
@@ -26,18 +20,8 @@ export const COMMON_STRING: CommonStringProps = {
                 SEARCH_LOCATION: 'SearchLocation',
                 RESTAURANT_DETAIL: 'ResturantDetail',
                 ADD_AND_EDIT_REVIEW: 'AddReview',
-
-
-
         },
         TAB_STRING: {
                 HOME: 'home',
-                // PEOPLE: 'people',
-                // SHIFT: 'shift',
-                // FOOD: 'food',
-                // PROFILE: 'profile',
-                // BOOK_MY_LEAVE: 'bookMyLeave',
-                // CREATE_BOOK_MY_LEAVE: 'createBookMyLeave',
-                // MY_OBJECTIVE: 'myObjective'
         },
 };

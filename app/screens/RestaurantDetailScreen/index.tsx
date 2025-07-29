@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     View,
     Text,
@@ -6,6 +6,7 @@ import {
     TouchableOpacity,
     ScrollView,
     StyleSheet,
+    ActivityIndicator,
 } from 'react-native';
 import {
     ArrowLeft,
@@ -25,6 +26,8 @@ import { Matrics } from '@core-utils/matrics';
 import CouponCard from '@components/CouponCard';
 import ReviewCard from '@components/ReviewCard';
 import { COMMON_STRING } from '~/app/constants/constants-strings';
+import { useMerchantStore } from '~/app/store/store';
+import { useMerchantActions } from '~/app/store/Action';
 
 const ratingsData = {
     average: 4.5,
@@ -37,7 +40,7 @@ const ratingsData = {
         1: 26,
     },
 };
-export const RestaurantDetailScreen = ({ navigation }: any) => {
+export const RestaurantDetailScreen = ({ navigation, route }: any) => {
     const images = [
         'https://media-cdn.tripadvisor.com/media/photo-l/0d/5d/72/c9/romantic-table-at-restaurant.jpg',
         'https://media-cdn.tripadvisor.com/media/photo-l/0d/5d/72/c9/romantic-table-at-restaurant.jpg',
@@ -46,6 +49,29 @@ export const RestaurantDetailScreen = ({ navigation }: any) => {
     ];
     const maxCount = Math.max(...Object.values(ratingsData.breakdown));
 
+    const { loading, error, merchant } = useMerchantStore();
+    const { fetchbyidMerchantDetail } = useMerchantActions();
+
+
+
+    useEffect(() => {
+        debugger
+        const merchant_id = route?.params?.item?.merchant_id || ''
+        debugger
+        fetchbyidMerchantDetail(merchant_id)
+            .then(() => {
+                console.log('Merchant loaded');
+            })
+            .catch((err) => {
+                // console.warn('Failed to load:', err);
+            });
+    }, []);
+
+
+    console.log("merchant", merchant)
+    console.log("error", error)
+
+
 
     return (
         <View style={{ flex: 1, paddingTop: hasNotch ? Matrics.vs30 : 0, backgroundColor: '#fff' }}>
@@ -53,188 +79,196 @@ export const RestaurantDetailScreen = ({ navigation }: any) => {
                 onBack={() => navigation.goBack()}
                 onShare={() => console.log('Share')}
             />
-            <ScrollView style={styles.container}>
-                {/* Header Icons */}
-                <ImageSlider Data={images} />
-                <View style={styles.content}>
-                    {/* Info Section */}
-                    <View style={styles.info}>
-                        <View style={styles.category}>
-                            <Text style={{ marginRight: 4 }}>
-                                <LayoutPanelLeft size={12} color="#f59e0b" />
-                            </Text>
-                            <Text style={styles.categoryText}>
-                                Hotels & Restaurant
-                            </Text>
-                        </View>
-                        <View style={styles.rating}>
-                            <Text style={{ marginRight: 4 }}>
-                                <Star size={12} color="#f59e0b" />
-                            </Text>
-                            <Text style={styles.ratingText}>
-                                4.5 (244 Reviews)
-                            </Text>
-                        </View>
-                        <View style={styles.dottedLineHorizontal} />
-                        <View style={styles.restaurantInfo} >
-                            <View style={styles.avatarPlaceholder} />
-                            <View>
-                                <Text style={styles.title}>Green Leaf Restaurant</Text>
-                                <View style={styles.locationContainer}>
-                                    <MapPin size={12} color="#330411" style={{ marginRight: 8 }} />
-                                    <Text style={styles.location}>Saravanampatti , Coimbatore</Text>
+            {loading && <ActivityIndicator />}
+            {error ? <Text style={styles.errorText}>{error}</Text> :
+                <ScrollView style={styles.container}>
+                    {/* Header Icons */}
+                    <ImageSlider Data={images} />
+                    <View style={styles.content}>
+                        {/* Info Section */}
+                        <View style={styles.info}>
+                            <View style={styles.category}>
+                                <Text style={{ marginRight: 4 }}>
+                                    <LayoutPanelLeft size={12} color="#f59e0b" />
+                                </Text>
+                                <Text style={styles.categoryText}>
+                                    Hotels & Restaurant
+                                </Text>
+                            </View>
+                            <View style={styles.rating}>
+                                <Text style={{ marginRight: 4 }}>
+                                    <Star size={12} color="#f59e0b" />
+                                </Text>
+                                <Text style={styles.ratingText}>
+                                    4.5 (244 Reviews)
+                                </Text>
+                            </View>
+                            <View style={styles.dottedLineHorizontal} />
+                            <View style={styles.restaurantInfo} >
+                                <View style={styles.avatarPlaceholder} />
+                                <View>
+                                    <Text style={styles.title}>Green Leaf Restaurant</Text>
+                                    <View style={styles.locationContainer}>
+                                        <MapPin size={12} color="#330411" style={{ marginRight: 8 }} />
+                                        <Text style={styles.location}>Saravanampatti , Coimbatore</Text>
+                                    </View>
                                 </View>
                             </View>
                         </View>
-                    </View>
 
 
 
-                    {/* Action Buttons */}
-                    <View style={styles.actionRow}>
-                        <TouchableOpacity style={styles.actionButton}>
-                            <Phone size={20} color="#e91e63" />
-                            <Text style={styles.actionText}>Call</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.actionButton}>
-                            <LocateFixed size={20} color="#e91e63" />
-                            <Text style={styles.actionText}>Locate Me</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <TouchableOpacity style={styles.websiteButton}>
-                        <Globe size={20} color="#e91e63" />
-                        <Text style={styles.websiteText}>View the website</Text>
-                    </TouchableOpacity>
-
-                    <View style={styles.dottedLineHorizontal} />
-
-
-                    {/* About Section */}
-                    <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>About</Text>
-                        <View style={{ marginTop: 16 }}>
-                            <Text style={styles.paragraph}>
-                                The Green Leaf Hotel is a modern 4-star hotel located in the city center. It offers comfortable rooms with Wi-Fi, air conditioning, and 24/7 room service. Guests can enjoy delicious meals at the in-house restaurant and rooftop café. Facilities include a swimming pool, gym, and spa for relaxation. The hotel also provides business meeting spaces and airport transfers. Friendly staff.
-                            </Text>
-                        </View>
-                    </View>
-                    <View style={styles.dottedLineHorizontal} />
-
-                    {/* Coupons */}
-                    <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>Coupons</Text>
-                        <View style={{ marginTop: 16 }}>
-                            <CouponCard
-                                brandName="Swiggy"
-                                discountText="Get upto 20% off"
-                                description="on Breakfast and lunch by pasting this code before Ordering"
-                                code="PRIYA777REF"
-                                expiry="3 Days"
-                                logoUrl="https://upload.wikimedia.org/wikipedia/en/1/12/Swiggy_logo.svg"
-                            />
-                            <CouponCard
-                                brandName="Swiggy"
-                                discountText="Get upto 20% off"
-                                description="on Breakfast and lunch by pasting this code before Ordering"
-                                code="PRIYA777REF"
-                                expiry="3 Days"
-                                logoUrl="https://upload.wikimedia.org/wikipedia/en/1/12/Swiggy_logo.svg"
-                            />
-                        </View>
-                        <View style={styles.couponcontainer}>
-                            <TouchableOpacity style={styles.row} onPress={() => navigation.navigate('Coupons')}>
-                                <Text style={styles.text}>View All {10} Coupons</Text>
-                                <ChevronRight size={16} color="#e91e63" />
+                        {/* Action Buttons */}
+                        <View style={styles.actionRow}>
+                            <TouchableOpacity style={styles.actionButton}>
+                                <Phone size={20} color="#e91e63" />
+                                <Text style={styles.actionText}>Call</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.actionButton}>
+                                <LocateFixed size={20} color="#e91e63" />
+                                <Text style={styles.actionText}>Locate Me</Text>
                             </TouchableOpacity>
                         </View>
+                        <TouchableOpacity style={styles.websiteButton}>
+                            <Globe size={20} color="#e91e63" />
+                            <Text style={styles.websiteText}>View the website</Text>
+                        </TouchableOpacity>
+
                         <View style={styles.dottedLineHorizontal} />
-                    </View>
 
-                    <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>Your Review</Text>
-                        <View style={{ marginTop: 16, marginBottom: 16 }}>
-                            <ReviewCard
-                                name="Priya"
-                                date="3/7/2024"
-                                rating={4}
-                                review="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-                                isUserReview
-                                onEdit={() => navigation.navigate(COMMON_STRING.STACK_STRING.ADD_AND_EDIT_REVIEW)}
-                                onDelete={() => console.log('Delete')}
-                            />
 
-                            <View style={styles.container}>
-                                <View style={styles.headerRow}>
-                                    <Text style={styles.title}>Ratings and Reviews</Text>
-                                    <TouchableOpacity>
-                                        <Text style={styles.addReview}>Add Review</Text>
-                                    </TouchableOpacity>
-                                </View>
-
-                                <View style={styles.contentRow}>
-                                    {/* Left: Average Rating */}
-                                    <View style={styles.left}>
-                                        <View style={styles.ratingRow}>
-                                            <Star size={24} color="#fbbf24" fill="#fbbf24" />
-                                            <Text style={styles.ratingBig}>{ratingsData.average.toFixed(1)}</Text>
-                                        </View>
-                                        <Text style={styles.reviewCountBig}>
-                                            ({ratingsData.totalReviews} Reviews)
-                                        </Text>
-                                    </View>
-
-                                    {/* Right: Rating Bars */}
-                                    <View style={styles.right}>
-                                        {Object.entries(ratingsData.breakdown)
-                                            .sort((a, b) => Number(b[0]) - Number(a[0]))
-                                            .map(([rating, count]) => {
-                                                const widthPercent = (count / maxCount) * 100;
-                                                return (
-                                                    <View style={styles.barRow} key={rating}>
-                                                        <Text style={styles.barLabel}>{rating}</Text>
-                                                        <View style={styles.barBackground}>
-                                                            <View
-                                                                style={[
-                                                                    styles.barFill,
-                                                                    { width: `${widthPercent}%` },
-                                                                ]}
-                                                            />
-                                                        </View>
-                                                    </View>
-                                                );
-                                            })}
-                                    </View>
-                                </View>
-                            </View>
-
+                        {/* About Section */}
+                        <View style={styles.section}>
+                            <Text style={styles.sectionTitle}>About</Text>
                             <View style={{ marginTop: 16 }}>
+                                <Text style={styles.paragraph}>
+                                    The Green Leaf Hotel is a modern 4-star hotel located in the city center. It offers comfortable rooms with Wi-Fi, air conditioning, and 24/7 room service. Guests can enjoy delicious meals at the in-house restaurant and rooftop café. Facilities include a swimming pool, gym, and spa for relaxation. The hotel also provides business meeting spaces and airport transfers. Friendly staff.
+                                </Text>
+                            </View>
+                        </View>
+                        <View style={styles.dottedLineHorizontal} />
+
+                        {/* Coupons */}
+                        <View style={styles.section}>
+                            <Text style={styles.sectionTitle}>Coupons</Text>
+                            <View style={{ marginTop: 16 }}>
+                                <CouponCard
+                                    brandName="Swiggy"
+                                    discountText="Get upto 20% off"
+                                    description="on Breakfast and lunch by pasting this code before Ordering"
+                                    code="PRIYA777REF"
+                                    expiry="3 Days"
+                                    logoUrl="https://upload.wikimedia.org/wikipedia/en/1/12/Swiggy_logo.svg"
+                                />
+                                <CouponCard
+                                    brandName="Swiggy"
+                                    discountText="Get upto 20% off"
+                                    description="on Breakfast and lunch by pasting this code before Ordering"
+                                    code="PRIYA777REF"
+                                    expiry="3 Days"
+                                    logoUrl="https://upload.wikimedia.org/wikipedia/en/1/12/Swiggy_logo.svg"
+                                />
+                            </View>
+                            <View style={styles.couponcontainer}>
+                                <TouchableOpacity style={styles.row} onPress={() => navigation.navigate('Coupons')}>
+                                    <Text style={styles.text}>View All {10} Coupons</Text>
+                                    <ChevronRight size={16} color="#e91e63" />
+                                </TouchableOpacity>
+                            </View>
+                            <View style={styles.dottedLineHorizontal} />
+                        </View>
+
+                        <View style={styles.section}>
+                            <Text style={styles.sectionTitle}>Your Review</Text>
+                            <View style={{ marginTop: 16, marginBottom: 16 }}>
                                 <ReviewCard
-                                    name="Kitty Magic"
+                                    name="Priya"
                                     date="3/7/2024"
                                     rating={4}
                                     review="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-                                    isVerified
-                                    likeCount={23}
+                                    isUserReview
+                                    onEdit={() => navigation.navigate(COMMON_STRING.STACK_STRING.ADD_AND_EDIT_REVIEW)}
+                                    onDelete={() => console.log('Delete')}
                                 />
-                                <ReviewCard
-                                    name="Kitty Magic"
-                                    date="3/7/2024"
-                                    rating={4}
-                                    review="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-                                    isVerified
-                                    likeCount={23}
-                                />
+
+                                <View style={styles.container}>
+                                    <View style={styles.headerRow}>
+                                        <Text style={styles.title}>Ratings and Reviews</Text>
+                                        <TouchableOpacity>
+                                            <Text style={styles.addReview}>Add Review</Text>
+                                        </TouchableOpacity>
+                                    </View>
+
+                                    <View style={styles.contentRow}>
+                                        {/* Left: Average Rating */}
+                                        <View style={styles.left}>
+                                            <View style={styles.ratingRow}>
+                                                <Star size={24} color="#fbbf24" fill="#fbbf24" />
+                                                <Text style={styles.ratingBig}>{ratingsData.average.toFixed(1)}</Text>
+                                            </View>
+                                            <Text style={styles.reviewCountBig}>
+                                                ({ratingsData.totalReviews} Reviews)
+                                            </Text>
+                                        </View>
+
+                                        {/* Right: Rating Bars */}
+                                        <View style={styles.right}>
+                                            {Object.entries(ratingsData.breakdown)
+                                                .sort((a, b) => Number(b[0]) - Number(a[0]))
+                                                .map(([rating, count]) => {
+                                                    const widthPercent = (count / maxCount) * 100;
+                                                    return (
+                                                        <View style={styles.barRow} key={rating}>
+                                                            <Text style={styles.barLabel}>{rating}</Text>
+                                                            <View style={styles.barBackground}>
+                                                                <View
+                                                                    style={[
+                                                                        styles.barFill,
+                                                                        { width: `${widthPercent}%` },
+                                                                    ]}
+                                                                />
+                                                            </View>
+                                                        </View>
+                                                    );
+                                                })}
+                                        </View>
+                                    </View>
+                                </View>
+
+                                <View style={{ marginTop: 16 }}>
+                                    <ReviewCard
+                                        name="Kitty Magic"
+                                        date="3/7/2024"
+                                        rating={4}
+                                        review="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+                                        isVerified
+                                        likeCount={23}
+                                    />
+                                    <ReviewCard
+                                        name="Kitty Magic"
+                                        date="3/7/2024"
+                                        rating={4}
+                                        review="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+                                        isVerified
+                                        likeCount={23}
+                                    />
+                                </View>
                             </View>
                         </View>
                     </View>
-                </View>
-            </ScrollView>
+                </ScrollView>}
         </View>
     );
 }
 
 
 const styles = StyleSheet.create({
+    errorText: {
+        color: 'red',
+        fontSize: 12,
+        marginTop: 4,
+        textAlign: 'center',
+    },
     row: {
         flexDirection: 'row',
         alignItems: 'center',

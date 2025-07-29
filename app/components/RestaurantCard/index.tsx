@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ImageBackground, Touchable, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, Touchable, TouchableOpacity, Image } from 'react-native';
 import { Star, MapPin } from 'lucide-react-native';
 
 type Props = {
@@ -9,6 +9,7 @@ type Props = {
     name: string;
     type: string;
     goDetailPage: () => void
+    merchant_logo: string
 };
 
 const RestaurantCard: React.FC<Props> = ({
@@ -17,8 +18,10 @@ const RestaurantCard: React.FC<Props> = ({
     location,
     name,
     type,
-    goDetailPage
+    goDetailPage,
+    merchant_logo
 }) => {
+    console.log("rating", rating)
     return (
         <TouchableOpacity style={styles.card} onPress={goDetailPage}>
             <ImageBackground
@@ -27,8 +30,12 @@ const RestaurantCard: React.FC<Props> = ({
                 imageStyle={styles.imageRadius}
             >
                 <View style={styles.ratingContainer}>
-                    <Star size={16} color="#FFD700" />
-                    <Text style={styles.ratingText}>{rating.toFixed(1)}</Text>
+                    {
+                        rating >= 1 ?
+                            <Star size={16} color="#FFD700" fill={'#FFD700'} /> :
+                            <Star size={16} color="#FFD700" />}
+
+                    <Text style={styles.ratingText}>{rating < 1 ? 0 : rating.toFixed(1)}</Text>
                 </View>
             </ImageBackground>
 
@@ -38,7 +45,12 @@ const RestaurantCard: React.FC<Props> = ({
             </View>
 
             <View style={styles.content}>
-                <View style={styles.avatarPlaceholder} />
+                <View style={styles.avatarPlaceholder} >
+                    <Image
+                        source={{ uri: merchant_logo }}
+                        style={styles.avatar}
+                    />
+                </View>
                 <View>
                     <Text style={styles.title}>{name}</Text>
                     <Text style={styles.subtitle}>{type}</Text>
@@ -51,6 +63,16 @@ const RestaurantCard: React.FC<Props> = ({
 export default RestaurantCard;
 
 const styles = StyleSheet.create({
+    avatar: {
+        width: 40,
+        height: 40,
+        borderRadius: 16,
+        marginRight: 8,
+    },
+    avatarRadius: {
+        borderTopLeftRadius: 16,
+        borderTopRightRadius: 16,
+    },
     card: {
         borderRadius: 16,
         overflow: 'hidden',

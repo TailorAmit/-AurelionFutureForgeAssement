@@ -20,6 +20,7 @@ export type Merchant = {
 };
 
 type MerchantStore = {
+    merchants: Merchant[] | null;
     merchant: Merchant | null;
     reviews: Review[];
     loading: boolean;
@@ -28,6 +29,7 @@ type MerchantStore = {
 };
 
 export const useMerchantStore = create<MerchantStore>(() => ({
+    merchants: null,
     merchant: null,
     reviews: [],
     loading: false,

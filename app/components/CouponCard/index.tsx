@@ -16,7 +16,7 @@ const RibbonWithNotches = () => {
     const notchRadius = 10;
     const notchesCount = 6;
     const spacing = height / (notchesCount + 1);
-    const ribbonColor = '#FF789D'; // <== Consistent color
+    const ribbonColor = '#FF789D';
 
     return (
         <View style={styles.ribbonWrapper}>

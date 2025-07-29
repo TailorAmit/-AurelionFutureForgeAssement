@@ -52,7 +52,6 @@ export default function ImageSlider({ Data }: Props) {
                 )}
             />
 
-            {/* Pagination Dots */}
             <View style={styles.dotsContainer}>
                 {Data.map((_, index) => (
                     <TouchableOpacity

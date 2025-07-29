@@ -1,5 +1,3 @@
-// components/SearchBar.tsx
-
 import React from 'react';
 import { View, TextInput, StyleSheet, TextInputProps } from 'react-native';
 import { Search } from 'lucide-react-native';

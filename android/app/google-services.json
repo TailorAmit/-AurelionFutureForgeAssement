@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1089808182184",
+    "project_id": "merchantapp-26c36",
+    "storage_bucket": "merchantapp-26c36.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1089808182184:android:c13d340be786bb45fd8b9d",
+        "android_client_info": {
+          "package_name": "com.awesomeproject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDs7MmUo8Ps3-u1hdaT6wQi38cgdcu7T-I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

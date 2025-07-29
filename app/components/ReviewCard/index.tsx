@@ -79,7 +79,6 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
 
             <Text style={styles.reviewText}>{review}</Text>
 
-            <View style={styles.bottomLine} />
         </View>
     );
 };
@@ -92,6 +91,7 @@ const styles = StyleSheet.create({
     },
     card: {
         marginBottom: 16,
+        marginTop: 16,
     },
     cardWithBorder: {
         paddingBottom: 12,

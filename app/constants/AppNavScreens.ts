@@ -4,6 +4,8 @@ import { COMMON_STRING } from "./constants-strings";
 import { SearchLocationScreen } from "@screens/Location";
 import { RestaurantDetailScreen } from "@screens/RestaurantDetailScreen";
 import AddAndEditReviewScreen from "@screens/Review";
+import { CouponScreen } from "@screens/Coupons";
+import { RattingListScreen } from "@screens/Review/ReviewList";
 
 export const AppNavScreens = [
 
@@ -22,6 +24,14 @@ export const AppNavScreens = [
     {
         name: COMMON_STRING.STACK_STRING.ADD_AND_EDIT_REVIEW,
         component: AddAndEditReviewScreen,
+    },
+    {
+        name: COMMON_STRING.STACK_STRING.COUPON_DETAIL,
+        component: CouponScreen,
+    },
+    {
+        name: COMMON_STRING.STACK_STRING.REVIEW_DETAIL,
+        component: RattingListScreen,
     },
 ];
 

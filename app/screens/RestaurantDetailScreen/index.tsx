@@ -80,7 +80,7 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
                 onShare={() => console.log('Share')}
             />
             {loading && <ActivityIndicator />}
-            {error ? <Text style={styles.errorText}>{error}</Text> :
+            {!error ? <Text style={styles.errorText}>{error}</Text> :
                 <ScrollView style={styles.container}>
                     {/* Header Icons */}
                     <ImageSlider Data={images} />
@@ -170,7 +170,7 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
                                 />
                             </View>
                             <View style={styles.couponcontainer}>
-                                <TouchableOpacity style={styles.row} onPress={() => navigation.navigate('Coupons')}>
+                                <TouchableOpacity style={styles.row} onPress={() => navigation.navigate(COMMON_STRING.STACK_STRING.COUPON_DETAIL)}>
                                     <Text style={styles.text}>View All {10} Coupons</Text>
                                     <ChevronRight size={16} color="#e91e63" />
                                 </TouchableOpacity>
@@ -180,16 +180,20 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
 
                         <View style={styles.section}>
                             <Text style={styles.sectionTitle}>Your Review</Text>
-                            <View style={{ marginTop: 16, marginBottom: 16 }}>
-                                <ReviewCard
-                                    name="Priya"
-                                    date="3/7/2024"
-                                    rating={4}
-                                    review="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-                                    isUserReview
-                                    onEdit={() => navigation.navigate(COMMON_STRING.STACK_STRING.ADD_AND_EDIT_REVIEW)}
-                                    onDelete={() => console.log('Delete')}
-                                />
+                            <View style={{ marginBottom: 16 }}>
+                                <View>
+                                    <ReviewCard
+                                        name="Priya"
+                                        date="3/7/2024"
+                                        rating={4}
+                                        review="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+                                        isUserReview
+                                        onEdit={() => navigation.navigate(COMMON_STRING.STACK_STRING.ADD_AND_EDIT_REVIEW)}
+                                        onDelete={() => console.log('Delete')}
+                                    />
+                                    <View style={styles.dottedLineHorizontal} />
+
+                                </View>
 
                                 <View style={styles.container}>
                                     <View style={styles.headerRow}>
@@ -235,23 +239,34 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
                                     </View>
                                 </View>
 
-                                <View style={{ marginTop: 16 }}>
-                                    <ReviewCard
-                                        name="Kitty Magic"
-                                        date="3/7/2024"
-                                        rating={4}
-                                        review="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-                                        isVerified
-                                        likeCount={23}
-                                    />
-                                    <ReviewCard
-                                        name="Kitty Magic"
-                                        date="3/7/2024"
-                                        rating={4}
-                                        review="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-                                        isVerified
-                                        likeCount={23}
-                                    />
+                                <View>
+                                    <View>
+                                        <ReviewCard
+                                            name="Kitty Magic"
+                                            date="3/7/2024"
+                                            rating={4}
+                                            review="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+                                            isVerified
+                                            likeCount={23}
+                                        />
+                                        <View style={styles.bottomLine} />
+                                    </View>
+                                    <View>
+                                        <ReviewCard
+                                            name="Kitty Magic"
+                                            date="3/7/2024"
+                                            rating={4}
+                                            review="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+                                            isVerified
+                                            likeCount={23}
+                                        />
+                                    </View>
+                                    <View style={styles.couponcontainer}>
+                                        <TouchableOpacity style={styles.row} onPress={() => navigation.navigate(COMMON_STRING.STACK_STRING.REVIEW_DETAIL)}>
+                                            <Text style={styles.text}>View All Reviews </Text>
+                                            <ChevronRight size={16} color="#e91e63" />
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
                             </View>
                         </View>
@@ -263,6 +278,11 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
 
 
 const styles = StyleSheet.create({
+    bottomLine: {
+        height: 1,
+        backgroundColor: '#DBDBDB',
+        marginTop: 10,
+    },
     errorText: {
         color: 'red',
         fontSize: 12,
@@ -300,9 +320,11 @@ const styles = StyleSheet.create({
     },
     container: {
         backgroundColor: '#fff',
+        marginTop: 20,
     },
     restaurantInfo: {
         flexDirection: 'row',
+        paddingTop: 20,
     },
     locationContainer: {
         paddingTop: 4,

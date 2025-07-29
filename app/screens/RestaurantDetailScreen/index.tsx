@@ -320,7 +320,6 @@ const styles = StyleSheet.create({
     },
     container: {
         backgroundColor: '#fff',
-        marginTop: 20,
     },
     restaurantInfo: {
         flexDirection: 'row',

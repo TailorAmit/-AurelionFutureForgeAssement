@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -30,13 +30,19 @@ import { useMerchantStore } from '~/app/store/store';
 import { useMerchantActions } from '~/app/store/Action';
 import { Linking } from 'react-native';
 import moment from 'moment';
-import _ from 'lodash';
+import _, { set } from 'lodash';
 import { useFocusEffect } from '@react-navigation/native';
+import { DeleteReviewModal } from './deleteModule';
 
 export const RestaurantDetailScreen = ({ navigation, route }: any) => {
 
+    const [deleteReviewModal, showDeleteReviewModal] = useState(false)
+    const [deletedModuleId, setDeletedModuleId] = useState(false)
+
     const { loading, error, merchant, Coupens, reviews } = useMerchantStore();
-    const { fetchbyidMerchantDetail, fetchbyidMerchantCouponsData, fetchbyidMerchantReviewData } = useMerchantActions();
+    const { fetchbyidMerchantDetail, fetchbyidMerchantCouponsData, fetchbyidMerchantReviewData, DeleteReviewData } = useMerchantActions();
+
+    const merchant_id = route?.params?.item?.merchant_id || ''
 
     const openMaps = (outletLocation: string) => {
         const url = Platform.select({
@@ -54,9 +60,15 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
         // await fetchbyidMerchantReviewData("ef09af28-174c-4369-a4c0-ea4c2aa8f8e2", 2)
     };
 
+    const deleteReview = async (review_id: string) => {
+        await DeleteReviewData(deletedModuleId)
+        callDetailsApi(merchant_id)
+        setDeletedModuleId('')
+        showDeleteReviewModal(false)
+    }
+
     useFocusEffect(
         React.useCallback(() => {
-            const merchant_id = route?.params?.item?.merchant_id || ''
             callDetailsApi(merchant_id)
             return () => {
             };
@@ -72,7 +84,6 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
         breakdown: merchant?.rating_distribution,
     };
     const myReview = merchant?.latest_reviews?.filter((item: any) => item?.review_id === route?.params?.item?.merchant_id || '')
-    console.log("myReview", myReview)
 
     return (
         <View style={{ flex: 1, paddingTop: hasNotch ? Matrics.vs30 : 0, backgroundColor: '#fff' }}>
@@ -153,35 +164,35 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
                         <View style={styles.dottedLineHorizontal} />
 
                         {/* Coupons */}
-                        <View style={styles.section}>
-                            <Text style={styles.sectionTitle}>Coupons</Text>
-                            <View style={{ marginTop: 16 }}>
-                                <FlatList
-                                    data={Coupens?.data || []}
-                                    renderItem={({ item }) => {
-                                        return <CouponCard
-                                            brandName={item?.coupon_provider?.coupon_provider_name}
-                                            discountText={`Get upto ${item?.coupon_offer_percentage} off`}
-                                            description={item?.coupon_description}
-                                            code={item?.coupon_code}
-                                            expiry={moment(item?.coupon_end_date, "YYYY-MM-DD").fromNow()}
-                                            logoUrl={item?.coupon_provider?.coupon_provider_logo}
-                                            claimNow={() => Linking.openURL(item?.coupon_provider?.coupon_provider_link)}
-                                        />
-                                    }}
-
-                                />
-                            </View>
-                            <View style={styles.couponcontainer}>
-                                <TouchableOpacity style={styles.row} onPress={() => navigation.navigate(COMMON_STRING.STACK_STRING.COUPON_DETAIL, {
-                                    merchant_id: route?.params?.item?.merchant_id || ''
-                                })}>
-                                    <Text style={styles.text}>View All {Coupens?.meta?.pagination?.total_coupons} Coupons</Text>
-                                    <ChevronRight size={16} color="#e91e63" />
-                                </TouchableOpacity>
-                            </View>
-                            <View style={styles.dottedLineHorizontal} />
-                        </View>
+                        {Coupens?.data?.length || 0 > 0 &&
+                            <View style={styles.section}>
+                                <Text style={styles.sectionTitle}>Coupons</Text>
+                                <View style={{ marginTop: 16 }}>
+                                    <FlatList
+                                        data={Coupens?.data || []}
+                                        renderItem={({ item }) => {
+                                            return <CouponCard
+                                                brandName={item?.coupon_provider?.coupon_provider_name}
+                                                discountText={`Get upto ${item?.coupon_offer_percentage} off`}
+                                                description={item?.coupon_description}
+                                                code={item?.coupon_code}
+                                                expiry={moment(item?.coupon_end_date, "YYYY-MM-DD").fromNow()}
+                                                logoUrl={item?.coupon_provider?.coupon_provider_logo}
+                                                claimNow={() => Linking.openURL(item?.coupon_provider?.coupon_provider_link)}
+                                            />
+                                        }}
+                                    />
+                                </View>
+                                <View style={styles.couponcontainer}>
+                                    <TouchableOpacity style={styles.row} onPress={() => navigation.navigate(COMMON_STRING.STACK_STRING.COUPON_DETAIL, {
+                                        merchant_id: route?.params?.item?.merchant_id || ''
+                                    })}>
+                                        <Text style={styles.text}>View All {Coupens?.meta?.pagination?.total_coupons} Coupons</Text>
+                                        <ChevronRight size={16} color="#e91e63" />
+                                    </TouchableOpacity>
+                                </View>
+                                <View style={styles.dottedLineHorizontal} />
+                            </View>}
 
                         <View style={styles.section}>
                             <Text style={styles.sectionTitle}>Your Review</Text>
@@ -193,8 +204,13 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
                                         rating={"4"}
                                         review="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
                                         isUserReview
-                                        onEdit={() => navigation.navigate(COMMON_STRING.STACK_STRING.ADD_AND_EDIT_REVIEW)}
-                                        onDelete={() => console.log('Delete')}
+                                        onEdit={() => navigation.navigate(COMMON_STRING.STACK_STRING.ADD_AND_EDIT_REVIEW, {
+                                            ReviewId: "ef09af28-174c-4369-a4c0-ea4c2aa8f8e2"
+                                        })}
+                                        onDelete={() => {
+                                            showDeleteReviewModal(true)
+                                            setDeletedModuleId("ef09af28-174c-4369-a4c0-ea4c2aa8f8e2")
+                                        }}
                                     />
                                     <View style={styles.dottedLineHorizontal} />
                                 </View>
@@ -244,41 +260,42 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
                                         </View>
                                     </View>
                                 </View>
+                                {reviews?.data?.length > 0 &&
+                                    <View>
+                                        <FlatList
+                                            data={reviews?.data || []}
+                                            renderItem={({ item, index }) => {
+                                                return <View>
+                                                    <ReviewCard
+                                                        name={item?.user_name}
+                                                        date={moment(item?.updated_at.slice(0, 10)).format('DD/MM/YYYY')}
+                                                        rating={item?.user_rating}
+                                                        review={item?.user_review_text}
+                                                        isVerified
+                                                        likeCount={23}
+                                                    />
+                                                    {reviews?.data?.length - 1 !== index &&
+                                                        <View style={styles.bottomLine} />
+                                                    }
+                                                </View>
+                                            }}
+                                        />
 
-                                <View>
-                                    <FlatList
-                                        data={reviews?.data || []}
-                                        renderItem={({ item, index }) => {
-                                            return <View>
-                                                <ReviewCard
-                                                    name={item?.user_name}
-                                                    date={moment(item?.updated_at.slice(0, 10)).format('DD/MM/YYYY')}
-                                                    rating={item?.user_rating}
-                                                    review={item?.user_review_text}
-                                                    isVerified
-                                                    likeCount={23}
-                                                />
-                                                {reviews?.data?.length - 1 !== index &&
-                                                    <View style={styles.bottomLine} />
-                                                }
-                                            </View>
-                                        }}
-                                    />
-
-
-                                    <View style={styles.couponcontainer}>
-                                        <TouchableOpacity style={styles.row} onPress={() => navigation.navigate(COMMON_STRING.STACK_STRING.REVIEW_DETAIL, {
-                                            merchant: merchant
-                                        })}>
-                                            <Text style={styles.text}>View All Reviews </Text>
-                                            <ChevronRight size={16} color="#e91e63" />
-                                        </TouchableOpacity>
+                                        <View style={[styles.couponcontainer, { marginBottom: 50 }]}>
+                                            <TouchableOpacity style={styles.row} onPress={() => navigation.navigate(COMMON_STRING.STACK_STRING.REVIEW_DETAIL, {
+                                                merchant: merchant
+                                            })}>
+                                                <Text style={styles.text}>View All Reviews </Text>
+                                                <ChevronRight size={16} color="#e91e63" />
+                                            </TouchableOpacity>
+                                        </View>
                                     </View>
-                                </View>
+                                }
                             </View>
                         </View>
                     </View>
                 </ScrollView>}
+            <DeleteReviewModal isVisible={deleteReviewModal} onCancel={() => showDeleteReviewModal(false)} onDelete={() => deleteReview(deletedModuleId)} />
         </View >
     );
 }

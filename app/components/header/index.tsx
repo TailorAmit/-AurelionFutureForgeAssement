@@ -1,11 +1,12 @@
 import { StyleSheet, TouchableOpacity, View, Text } from "react-native"
 import { CustomHeaderProps } from "../../types";
-import { ArrowLeft, ChevronRight, MapPin, Share2 } from "lucide-react-native";
+import { ArrowLeft, ChevronRight, MapPin, Share2, Trash2 } from "lucide-react-native";
 
 export const CustomHeader: React.FC<CustomHeaderProps> = ({
   title,
   onBack,
   onShare,
+  onDelete,
   locationSubtitle,
   locationSubtitleHandler
 }) => {
@@ -23,6 +24,13 @@ export const CustomHeader: React.FC<CustomHeaderProps> = ({
             <Text style={styles.title}>{title}</Text>
             : null}
         </View>
+
+
+        {onDelete ?
+          <TouchableOpacity onPress={onDelete}>
+            <Trash2 size={24} color="#f34b83" />
+          </TouchableOpacity>
+          : null}
 
         {onShare ?
           <TouchableOpacity onPress={onShare}>

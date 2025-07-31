@@ -14,15 +14,16 @@ import { CustomHeader } from '@components/header';
 import { useMerchantStore } from '~/app/store/store';
 import Avatar from '@components/Avtar';
 import { useMerchantActions } from '~/app/store/Action';
+import { DeleteReviewModal } from '@screens/RestaurantDetailScreen/deleteModule';
 
 const AddAndEditReviewScreen = ({ navigation, route }: any) => {
     const [rating, setRating] = useState(0);
     const [review, setReview] = useState('');
     const [errors, setErrors] = useState<string[]>([]);
+    const [deleteReviewModal, showDeleteReviewModal] = useState(false)
 
     const merchant_id = route?.params?.merchant_id
-
-    console.log("route", route?.params?.merchant_id)
+    const ReviewId = route?.params?.ReviewId
 
     const maxChars = 500;
 
@@ -39,11 +40,18 @@ const AddAndEditReviewScreen = ({ navigation, route }: any) => {
         navigation.goBack();
     };
 
+    const handleDeleteModal = (text: string) => {
+        showDeleteReviewModal(true)
+    };
+
     return (
         <View style={{ flex: 1, paddingTop: hasNotch ? Matrics.vs30 : 0, backgroundColor: '#fff' }}>
             <CustomHeader
                 onBack={() => navigation.goBack()}
-                title="Add Review"
+                title={ReviewId ? "Edit Review" : "Add Review"}
+                {...(ReviewId ? {
+                    onDelete: () => handleDeleteModal(true)
+                } : {})}
             />
             <View style={styles.container}>
                 {/* Header */}
@@ -101,9 +109,11 @@ const AddAndEditReviewScreen = ({ navigation, route }: any) => {
 
                 {/* Submit Button */}
                 <TouchableOpacity style={styles.button} onPress={handlesubmitData}>
-                    <Text style={styles.buttonText}>Post Review</Text>
+                    {ReviewId ? <Text style={styles.buttonText}>Save changes</Text> :
+                        <Text style={styles.buttonText}>Post Review</Text>}
                 </TouchableOpacity>
             </View>
+            <DeleteReviewModal isVisible={deleteReviewModal} onCancel={() => showDeleteReviewModal(false)} onDelete={() => deleteReview(deletedModuleId)} />
         </View>
     );
 };

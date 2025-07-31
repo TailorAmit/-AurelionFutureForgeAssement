@@ -1,4 +1,4 @@
-import { ActivityIndicator, FlatList, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, useColorScheme, View } from 'react-native';
+import { ActivityIndicator, FlatList, Text, View } from 'react-native';
 import { CustomHeader } from '../../components/header';
 import { SearchBar } from '../../components/SearchFiled';
 import { useEffect, useState } from 'react';
@@ -65,10 +65,8 @@ const HomeScreen = ({ navigation }: { navigation: any }) => {
     }
 
     if (error) return <Text>Error: {error}</Text>;
-
     return (
-        <View style={{ flex: 1, paddingTop: hasNotch ? Matrics.vs30 : 0, backgroundColor: '#fff' }}>
-
+        <View style={{ flex: 1, paddingTop: hasNotch ? Matrics.vs30 : 0, backgroundColor: '#fff', }}>
             <CustomHeader
                 title="Merchants"
                 locationSubtitle='Update Your Location'
@@ -93,9 +91,10 @@ const HomeScreen = ({ navigation }: { navigation: any }) => {
                         showsHorizontalScrollIndicator={false}
                     />
                 </View>
-                <View style={{ marginTop: 16 }}>
+                <View style={{ marginTop: 16, }}>
                     <FlatList
                         data={merchantData}
+                        contentContainerStyle={{ paddingBottom: 300 }}
                         renderItem={({ item }) => {
                             const categories = item.categories.map((category: any) => category.category_name).join(', ');
                             return (
@@ -123,7 +122,6 @@ const HomeScreen = ({ navigation }: { navigation: any }) => {
                                     <ActivityIndicator size="small" color="#999" />
                                 </View>
                             );
-
                         }}
                         ListEmptyComponent={
                             <View style={{ alignItems: 'center', marginTop: 40 }}>

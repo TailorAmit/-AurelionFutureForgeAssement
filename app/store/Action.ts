@@ -232,7 +232,7 @@ export const useMerchantActions = () => {
         });
     };
 
-    const DeleteReviewData = (data: any, id: any): Promise<void> => {
+    const DeleteReviewData = (id: any): Promise<void> => {
         return new Promise(async (resolve, reject) => {
             try {
                 set({ loading: true, error: null, success: false });

@@ -3,24 +3,34 @@ import { CustomHeader } from "@components/header";
 import ReviewCard from "@components/ReviewCard";
 import { hasNotch } from "@core-utils/index";
 import { Matrics } from "@core-utils/matrics";
-import { ChevronRight, Star } from "lucide-react-native";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { COMMON_STRING } from "~/app/constants/constants-strings";
+import { Star } from "lucide-react-native";
+import moment from "moment";
+import { useEffect } from "react";
+import { FlatList, StyleSheet, Text, View } from "react-native";
+import { useMerchantActions } from "~/app/store/Action";
+import { useMerchantStore } from "~/app/store/store";
 
-export const RattingListScreen = ({ navigation }: any) => {
+export const RattingListScreen = ({ navigation, route }: any) => {
+    const merchant = route?.params?.merchant
     const ratingsData = {
-        average: 4.5,
-        totalReviews: 266,
-        breakdown: {
-            5: 90,
-            4: 70,
-            3: 50,
-            2: 30,
-            1: 26,
-        },
+        average: merchant?.avg_rating,
+        totalReviews: merchant?.total_review_count,
+        breakdown: merchant?.rating_distribution,
     };
 
-    const maxCount = Math.max(...Object.values(ratingsData.breakdown));
+
+    const { reviews } = useMerchantStore();
+    const { fetchbyidMerchantReviewData } = useMerchantActions();
+
+    const callDetailsApi = async (merchant_id: string) => {
+        await fetchbyidMerchantReviewData("ef09af28-174c-4369-a4c0-ea4c2aa8f8e2")
+    };
+
+    useEffect(() => {
+        const merchant_id = route?.params?.merchant_id || ''
+        callDetailsApi(merchant_id)
+    }, []);
+
     return (
         <View style={{ flex: 1, paddingTop: hasNotch ? Matrics.vs30 : 0, backgroundColor: '#fff' }}>
             <CustomHeader
@@ -46,7 +56,7 @@ export const RattingListScreen = ({ navigation }: any) => {
                             {Object.entries(ratingsData.breakdown)
                                 .sort((a, b) => Number(b[0]) - Number(a[0]))
                                 .map(([rating, count]) => {
-                                    const widthPercent = (count / maxCount) * 100;
+                                    const widthPercent = (count / 5) * 100;
                                     return (
                                         <View style={styles.barRow} key={rating}>
                                             <Text style={styles.barLabel}>{rating}</Text>
@@ -66,28 +76,24 @@ export const RattingListScreen = ({ navigation }: any) => {
                 </View>
 
                 <View>
-                    <View>
-                        <ReviewCard
-                            name="Kitty Magic"
-                            date="3/7/2024"
-                            rating={4}
-                            review="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-                            isVerified
-                            likeCount={23}
-                        />
-                        <View style={styles.bottomLine} />
-                    </View>
-                    <View>
-                        <ReviewCard
-                            name="Kitty Magic"
-                            date="3/7/2024"
-                            rating={4}
-                            review="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-                            isVerified
-                            likeCount={23}
-                        />
-                        <View style={styles.bottomLine} />
-                    </View>
+                    <FlatList
+                        data={reviews?.data || []}
+                        renderItem={({ item, index }) => {
+                            return <View>
+                                <ReviewCard
+                                    name={item?.user_name}
+                                    date={moment(item?.updated_at.slice(0, 10)).format('DD/MM/YYYY')}
+                                    rating={item?.user_rating}
+                                    review={item?.user_review_text}
+                                    isVerified
+                                    likeCount={23}
+                                />
+                                {reviews?.data?.length - 1 !== index &&
+                                    <View style={styles.bottomLine} />
+                                }
+                            </View>
+                        }}
+                    />
                 </View>
             </View>
         </View>

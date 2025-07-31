@@ -8,10 +8,9 @@ import {
     StyleSheet,
     ActivityIndicator,
     Platform,
+    FlatList,
 } from 'react-native';
 import {
-    ArrowLeft,
-    Share2,
     Star,
     Phone,
     LocateFixed,
@@ -30,29 +29,13 @@ import { COMMON_STRING } from '~/app/constants/constants-strings';
 import { useMerchantStore } from '~/app/store/store';
 import { useMerchantActions } from '~/app/store/Action';
 import { Linking } from 'react-native';
+import moment from 'moment';
+import _ from 'lodash';
+import { useFocusEffect } from '@react-navigation/native';
 
-
-const ratingsData = {
-    average: 4.5,
-    totalReviews: 266,
-    breakdown: {
-        5: 90,
-        4: 70,
-        3: 50,
-        2: 30,
-        1: 26,
-    },
-};
 export const RestaurantDetailScreen = ({ navigation, route }: any) => {
-    const images = [
-        'https://media-cdn.tripadvisor.com/media/photo-l/0d/5d/72/c9/romantic-table-at-restaurant.jpg',
-        'https://media-cdn.tripadvisor.com/media/photo-l/0d/5d/72/c9/romantic-table-at-restaurant.jpg',
-        'https://media-cdn.tripadvisor.com/media/photo-l/0d/5d/72/c9/romantic-table-at-restaurant.jpg',
-        'https://media-cdn.tripadvisor.com/media/photo-l/0d/5d/72/c9/romantic-table-at-restaurant.jpg',
-    ];
-    const maxCount = Math.max(...Object.values(ratingsData.breakdown));
 
-    const { loading, error, merchant } = useMerchantStore();
+    const { loading, error, merchant, Coupens, reviews } = useMerchantStore();
     const { fetchbyidMerchantDetail, fetchbyidMerchantCouponsData, fetchbyidMerchantReviewData } = useMerchantActions();
 
     const openMaps = (outletLocation: string) => {
@@ -65,18 +48,31 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
 
     const callDetailsApi = async (merchant_id: string) => {
         await fetchbyidMerchantDetail(merchant_id)
-        await fetchbyidMerchantCouponsData(merchant_id)
-        await fetchbyidMerchantReviewData(merchant_id)
+        await fetchbyidMerchantCouponsData(merchant_id, 2)
+        await fetchbyidMerchantReviewData(merchant_id, 2)
+        // await fetchbyidMerchantCouponsData("ef09af28-174c-4369-a4c0-ea4c2aa8f8e2", 2)
+        // await fetchbyidMerchantReviewData("ef09af28-174c-4369-a4c0-ea4c2aa8f8e2", 2)
     };
 
-    useEffect(() => {
-        const merchant_id = route?.params?.item?.merchant_id || ''
-        callDetailsApi(merchant_id)
-    }, []);
+    useFocusEffect(
+        React.useCallback(() => {
+            const merchant_id = route?.params?.item?.merchant_id || ''
+            callDetailsApi(merchant_id)
+            return () => {
+            };
+        }, [])
+    );
 
-    console.log('merchant', merchant);
 
     const category = merchant?.category?.map((item: any) => item?.category_name).join(', ');
+
+    const ratingsData = {
+        average: merchant?.avg_rating,
+        totalReviews: merchant?.total_review_count,
+        breakdown: merchant?.rating_distribution,
+    };
+    const myReview = merchant?.latest_reviews?.filter((item: any) => item?.review_id === route?.params?.item?.merchant_id || '')
+    console.log("myReview", myReview)
 
     return (
         <View style={{ flex: 1, paddingTop: hasNotch ? Matrics.vs30 : 0, backgroundColor: '#fff' }}>
@@ -88,7 +84,7 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
             {error ? <Text style={styles.errorText}>{error}</Text> :
                 <ScrollView style={styles.container}>
                     {/* Header Icons */}
-                    <ImageSlider Data={images} />
+                    <ImageSlider Data={_.map(merchant?.merchant_images, (item: any) => item?.merchant_image_url)} />
                     <View style={styles.content}>
                         {/* Info Section */}
                         <View style={styles.info}>
@@ -126,8 +122,6 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
                             </View>
                         </View>
 
-
-
                         {/* Action Buttons */}
                         <View style={styles.actionRow}>
                             <TouchableOpacity style={styles.actionButton} onPress={() => Linking.openURL(`tel:${merchant?.outlet?.outlet_phone_number}`)}>
@@ -135,12 +129,12 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
                                 <Text style={styles.actionText}>Call</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.actionButton}
-                                onPress={() => openMaps(merchant?.outlet?.outlet_loction_name)}>
+                                onPress={() => openMaps(merchant?.outlet?.outlet_loction_name || "")}>
                                 <LocateFixed size={20} color="#e91e63" />
                                 <Text style={styles.actionText}>Locate Me</Text>
                             </TouchableOpacity>
                         </View>
-                        <TouchableOpacity style={styles.websiteButton} onPress={() => Linking.openURL(merchant?.outlet?.outlet_loction_url)} >
+                        <TouchableOpacity style={styles.websiteButton} onPress={() => Linking.openURL(merchant?.outlet?.outlet_loction_url || '')} >
                             <Globe size={20} color="#e91e63" />
                             <Text style={styles.websiteText}>View the website</Text>
                         </TouchableOpacity>
@@ -162,26 +156,27 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
                         <View style={styles.section}>
                             <Text style={styles.sectionTitle}>Coupons</Text>
                             <View style={{ marginTop: 16 }}>
-                                <CouponCard
-                                    brandName="Swiggy"
-                                    discountText="Get upto 20% off"
-                                    description="on Breakfast and lunch by pasting this code before Ordering"
-                                    code="PRIYA777REF"
-                                    expiry="3 Days"
-                                    logoUrl="https://upload.wikimedia.org/wikipedia/en/1/12/Swiggy_logo.svg"
-                                />
-                                <CouponCard
-                                    brandName="Swiggy"
-                                    discountText="Get upto 20% off"
-                                    description="on Breakfast and lunch by pasting this code before Ordering"
-                                    code="PRIYA777REF"
-                                    expiry="3 Days"
-                                    logoUrl="https://upload.wikimedia.org/wikipedia/en/1/12/Swiggy_logo.svg"
+                                <FlatList
+                                    data={Coupens?.data || []}
+                                    renderItem={({ item }) => {
+                                        return <CouponCard
+                                            brandName={item?.coupon_provider?.coupon_provider_name}
+                                            discountText={`Get upto ${item?.coupon_offer_percentage} off`}
+                                            description={item?.coupon_description}
+                                            code={item?.coupon_code}
+                                            expiry={moment(item?.coupon_end_date, "YYYY-MM-DD").fromNow()}
+                                            logoUrl={item?.coupon_provider?.coupon_provider_logo}
+                                            claimNow={() => Linking.openURL(item?.coupon_provider?.coupon_provider_link)}
+                                        />
+                                    }}
+
                                 />
                             </View>
                             <View style={styles.couponcontainer}>
-                                <TouchableOpacity style={styles.row} onPress={() => navigation.navigate(COMMON_STRING.STACK_STRING.COUPON_DETAIL)}>
-                                    <Text style={styles.text}>View All {10} Coupons</Text>
+                                <TouchableOpacity style={styles.row} onPress={() => navigation.navigate(COMMON_STRING.STACK_STRING.COUPON_DETAIL, {
+                                    merchant_id: route?.params?.item?.merchant_id || ''
+                                })}>
+                                    <Text style={styles.text}>View All {Coupens?.meta?.pagination?.total_coupons} Coupons</Text>
                                     <ChevronRight size={16} color="#e91e63" />
                                 </TouchableOpacity>
                             </View>
@@ -195,7 +190,7 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
                                     <ReviewCard
                                         name="Priya"
                                         date="3/7/2024"
-                                        rating={4}
+                                        rating={"4"}
                                         review="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
                                         isUserReview
                                         onEdit={() => navigation.navigate(COMMON_STRING.STACK_STRING.ADD_AND_EDIT_REVIEW)}
@@ -219,7 +214,7 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
                                         <View style={styles.left}>
                                             <View style={styles.ratingRow}>
                                                 <Star size={24} color="#fbbf24" fill="#fbbf24" />
-                                                <Text style={styles.ratingBig}>{ratingsData.average.toFixed(1)}</Text>
+                                                <Text style={styles.ratingBig}>{ratingsData?.average?.toFixed(1)}</Text>
                                             </View>
                                             <Text style={styles.reviewCountBig}>
                                                 ({ratingsData.totalReviews} Reviews)
@@ -228,10 +223,10 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
 
                                         {/* Right: Rating Bars */}
                                         <View style={styles.right}>
-                                            {Object.entries(ratingsData.breakdown)
+                                            {Object.entries(ratingsData.breakdown || {})
                                                 .sort((a, b) => Number(b[0]) - Number(a[0]))
                                                 .map(([rating, count]) => {
-                                                    const widthPercent = (count / maxCount) * 100;
+                                                    const widthPercent = (count / 5) * 100;
                                                     return (
                                                         <View style={styles.barRow} key={rating}>
                                                             <Text style={styles.barLabel}>{rating}</Text>
@@ -251,29 +246,30 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
                                 </View>
 
                                 <View>
-                                    <View>
-                                        <ReviewCard
-                                            name="Kitty Magic"
-                                            date="3/7/2024"
-                                            rating={4}
-                                            review="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-                                            isVerified
-                                            likeCount={23}
-                                        />
-                                        <View style={styles.bottomLine} />
-                                    </View>
-                                    <View>
-                                        <ReviewCard
-                                            name="Kitty Magic"
-                                            date="3/7/2024"
-                                            rating={4}
-                                            review="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-                                            isVerified
-                                            likeCount={23}
-                                        />
-                                    </View>
+                                    <FlatList
+                                        data={reviews?.data || []}
+                                        renderItem={({ item, index }) => {
+                                            return <View>
+                                                <ReviewCard
+                                                    name={item?.user_name}
+                                                    date={moment(item?.updated_at.slice(0, 10)).format('DD/MM/YYYY')}
+                                                    rating={item?.user_rating}
+                                                    review={item?.user_review_text}
+                                                    isVerified
+                                                    likeCount={23}
+                                                />
+                                                {reviews?.data?.length - 1 !== index &&
+                                                    <View style={styles.bottomLine} />
+                                                }
+                                            </View>
+                                        }}
+                                    />
+
+
                                     <View style={styles.couponcontainer}>
-                                        <TouchableOpacity style={styles.row} onPress={() => navigation.navigate(COMMON_STRING.STACK_STRING.REVIEW_DETAIL)}>
+                                        <TouchableOpacity style={styles.row} onPress={() => navigation.navigate(COMMON_STRING.STACK_STRING.REVIEW_DETAIL, {
+                                            merchant: merchant
+                                        })}>
                                             <Text style={styles.text}>View All Reviews </Text>
                                             <ChevronRight size={16} color="#e91e63" />
                                         </TouchableOpacity>

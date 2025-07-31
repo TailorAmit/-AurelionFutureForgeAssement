@@ -16,6 +16,10 @@ const HomeScreen = ({ navigation }: { navigation: any }) => {
     const [query, setQuery] = useState('');
     const [categoryName, setCategoryName] = useState('');
     const [merchantData, setMerchantData] = useState<any>([]);
+    const { loading, error, merchants } = useMerchantStore();
+    const { fetchMerchantDetail } = useMerchantActions();
+    const [limit, setLimit] = useState(10);
+
     const handlePress = (label: string) => {
         if (categoryName === label) {
             setCategoryName('')
@@ -29,97 +33,109 @@ const HomeScreen = ({ navigation }: { navigation: any }) => {
         }
     };
 
-    const { loading, error, merchants } = useMerchantStore();
-    const { fetchMerchantDetail } = useMerchantActions();
+    const CallMerchantApi = async (limit: number, query?: string) => {
+        await fetchMerchantDetail(limit, query)
+    }
+
 
     useEffect(() => {
-        fetchMerchantDetail()
-            .then(() => {
-                console.log('Merchant loaded');
-            })
-            .catch((err) => {
-                console.warn('Failed to load:', err);
-            });
+        CallMerchantApi(limit, query)
     }, []);
+
 
     useEffect(() => {
         setMerchantData(merchants?.data?.data?.merchants)
     }, [merchants])
 
+    const searchHandler = async (text: string) => {
+        if (text !== query) {
+            setLimit(10)
+            await fetchMerchantDetail(10, text)
+            setQuery(text);
+        }
+    }
 
     const categories = merchants?.data?.data?.categories || [];
 
-    if (loading) return <ActivityIndicator />;
+    const handleMoreData = () => {
+        if (query === '') {
+            setLimit(limit + 10)
+            CallMerchantApi(limit + 10)
+        }
+    }
+
     if (error) return <Text>Error: {error}</Text>;
-    if (!merchants) return null;
 
     return (
         <View style={{ flex: 1, paddingTop: hasNotch ? Matrics.vs30 : 0, backgroundColor: '#fff' }}>
+
             <CustomHeader
                 title="Merchants"
                 locationSubtitle='Update Your Location'
                 locationSubtitleHandler={() => navigation.navigate(COMMON_STRING.STACK_STRING.SEARCH_LOCATION)}
             />
-            <ScrollView>
-                <View style={{ paddingHorizontal: 16 }}>
-                    <View>
-                        <SearchBar value={query} onChangeText={setQuery} />
-                    </View>
-
-                    <View style={{ marginTop: 16 }}>
-                        <FlatList
-                            data={categories}
-                            horizontal
-                            renderItem={({ item }) => {
-                                return <TabButton
-                                    label={item.category_name}
-                                    activeIndex={categoryName === item.category_name}
-                                    onPress={() => handlePress(item.category_name)} />
-                            }}
-                            keyExtractor={(item) => item.id}
-                            showsHorizontalScrollIndicator={false}
-                        />
-                    </View>
-                    <View style={{ marginTop: 16 }}>
-                        <FlatList
-                            data={merchantData}
-                            renderItem={({ item }) => {
-                                const categories = item.categories.map((category: any) => category.category_name).join(', ');
-                                return (
-                                    <RestaurantCard
-                                        imageUrl={item.merchant_thumbnail_url}
-                                        rating={item.avg_rating}
-                                        location="Priya’s House, Saravanampatti, Coimbatore"
-                                        name={item.merchant_name}
-                                        type={categories}
-                                        merchant_logo={item.merchant_logo}
-                                        goDetailPage={() =>
-                                            navigation.navigate(COMMON_STRING.STACK_STRING.RESTAURANT_DETAIL, { item })
-                                        }
-                                    />
-                                );
-                            }}
-                            keyExtractor={(item) => item.id}
-                            showsHorizontalScrollIndicator={false}
-                            ListEmptyComponent={
-                                <View style={{ alignItems: 'center', marginTop: 40 }}>
-                                    <Text style={{ fontSize: 16, color: '#999' }}>No record found</Text>
-                                </View>
-                            }
-                        />
-                    </View>
-
+            <View style={{ paddingHorizontal: 16 }}>
+                <View>
+                    <SearchBar value={query} onDebouncedChange={(text) => searchHandler(text)} />
                 </View>
-            </ScrollView>
+
+                <View style={{ marginTop: 16 }}>
+                    <FlatList
+                        data={categories}
+                        horizontal
+                        renderItem={({ item }) => {
+                            return <TabButton
+                                label={item.category_name}
+                                activeIndex={categoryName === item.category_name}
+                                onPress={() => handlePress(item.category_name)} />
+                        }}
+                        keyExtractor={(item) => item.id}
+                        showsHorizontalScrollIndicator={false}
+                    />
+                </View>
+                <View style={{ marginTop: 16 }}>
+                    <FlatList
+                        data={merchantData}
+                        renderItem={({ item }) => {
+                            const categories = item.categories.map((category: any) => category.category_name).join(', ');
+                            return (
+                                <RestaurantCard
+                                    imageUrl={item.merchant_thumbnail_url}
+                                    rating={item.avg_rating}
+                                    location="Priya’s House, Saravanampatti, Coimbatore"
+                                    name={item.merchant_name}
+                                    type={categories}
+                                    merchant_logo={item.merchant_logo}
+                                    goDetailPage={() =>
+                                        navigation.navigate(COMMON_STRING.STACK_STRING.RESTAURANT_DETAIL, { item })
+                                    }
+                                />
+                            );
+                        }}
+                        onEndReached={() => handleMoreData()}
+                        onEndReachedThreshold={0.05}
+                        keyExtractor={(item) => item.id}
+                        showsHorizontalScrollIndicator={false}
+                        ListFooterComponent={() => {
+                            if (!loading) return null;
+                            return (
+                                <View style={{ padding: 16 }}>
+                                    <ActivityIndicator size="small" color="#999" />
+                                </View>
+                            );
+
+                        }}
+                        ListEmptyComponent={
+                            <View style={{ alignItems: 'center', marginTop: 40 }}>
+                                <Text style={{ fontSize: 16, color: '#999' }}>No record found</Text>
+                            </View>
+                        }
+                    />
+                </View>
+
+            </View>
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-    },
-});
 
 export default HomeScreen;

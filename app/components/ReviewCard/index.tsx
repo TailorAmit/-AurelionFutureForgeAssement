@@ -10,7 +10,7 @@ import { Star, Trash2, Edit, ThumbsUp, BadgeCheck } from 'lucide-react-native';
 interface ReviewCardProps {
     name: string;
     date: string;
-    rating: number;
+    rating: string;
     review: string;
     isUserReview?: boolean;
     isVerified?: boolean;

@@ -1,0 +1,1 @@
+export const apiUrl = "https://admin.api.kittymagic.in/v1/app";

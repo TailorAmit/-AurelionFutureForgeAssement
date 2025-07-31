@@ -62,6 +62,7 @@ type CouponCardProps = {
     code: string;
     expiry: string;
     logoUrl: string;
+    claimNow: () => void
 };
 
 const CouponCard: React.FC<CouponCardProps> = ({
@@ -71,6 +72,7 @@ const CouponCard: React.FC<CouponCardProps> = ({
     code,
     expiry,
     logoUrl,
+    claimNow
 }) => {
     const copyToClipboard = () => {
         Clipboard.setString(code);
@@ -86,11 +88,10 @@ const CouponCard: React.FC<CouponCardProps> = ({
                         <Image source={{ uri: logoUrl }} style={styles.logo} />
                         <Text style={styles.brand}>{brandName}</Text>
                     </View>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={claimNow}>
                         <Text style={styles.claimNow}>Claim Now</Text>
                     </TouchableOpacity>
                 </View>
-
                 <Text style={styles.discount}>{discountText}</Text>
                 <Text style={styles.description}>{description}</Text>
                 <Text style={styles.instructions}>

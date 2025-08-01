@@ -1,72 +1,49 @@
-Aurelion Future Forge Assessment
+# Aurelion Future Forge Assessment
 
-This is the official React Native project for the Aurelion Future Forge Assessment.
+This repository contains the React Native project for the Aurelion Future Forge assessment.
 
-🚀 Getting Started
+---
 
-Follow the steps below to set up and run the project locally.
+## 🚀 Getting Started
 
-📦 Step 1: Clone the Repository
+Follow these steps to set up and run the project on your local machine.
 
+---
+
+### 📦 Step 1: Clone the Repository
+
+```bash
 git clone https://github.com/TailorAmit/-AurelionFutureForgeAssement.git
 cd -AurelionFutureForgeAssement
+```
 
-📥 Step 2: Install Dependencies
-
+### 📥 Step 2: Install Packages
+```bash
 npm install --legacy-peer-deps
+```
 
 🍎 Step 3: Install iOS Pods
-
+```bash
 cd ios
 pod install
-
-⚙️ Step 4: Configure API and Token
-
-Open the project in any code editor and go to:
-
+```
+⚙️ Step 4: Update API Token & URLs
+Open the project in your editor and go to:
+```bash
 app/constants/config.ts
-
-Update the file with the correct API base URL and access token.
+```
 
 ▶️ Step 5: Run the Project
-
-For iOS:
-
-npx react-native run-ios
-
-For Android:
-
-npx react-native run-android
-
-🛠 Tech Stack
-
-React Native
-
-TypeScript
-
-Zustand (for state management)
-
-Axios (for API requests)
-
-Lucide Icons
-
-📂 Project Structure
-
-- app/
-  - components/
-  - screens/
-  - constants/
-    - config.ts ← API URL & Token configuration
-  - store/
-  - ...
-
-📌 Notes
-
-Make sure you have Xcode and CocoaPods installed for iOS development.
-
-Use a properly configured emulator or physical device for Android builds.
+To run the app:
+ ```bash
+npx react-native run-ios     # For iOS
+npx react-native run-android # For Android
+```
 
 👨‍💻 Author
+Amit Tailor
 
-Amit TailorGitHub: TailorAmit
+GitHub: TailorAmit
+
+
 

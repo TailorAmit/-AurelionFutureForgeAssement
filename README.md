@@ -42,14 +42,8 @@ npx react-native run-android # For Android
 
 👨‍💻 Author
 Amit Tailor
+
 GitHub: TailorAmit
 
 
----
-
-### ✅ To Use:
-- Copy the above block and paste it into a file named `README.md` in the root of your project.
-- It'll render properly in GitHub and any Markdown viewer.
-
-Let me know if you also want to include screenshots, environment setup, or project features.
 

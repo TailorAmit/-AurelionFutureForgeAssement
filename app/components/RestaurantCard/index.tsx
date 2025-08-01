@@ -21,7 +21,6 @@ const RestaurantCard: React.FC<Props> = ({
     goDetailPage,
     merchant_logo
 }) => {
-    console.log("rating", rating)
     return (
         <TouchableOpacity style={styles.card} onPress={goDetailPage}>
             <ImageBackground

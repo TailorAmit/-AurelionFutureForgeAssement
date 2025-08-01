@@ -81,7 +81,6 @@ function App() {
       });
 
       const unsubscribe = messaging().onMessage(async notification => {
-        console.log("notification", notification);
         const notificationData = await notification;
         CreateChannel(notificationData);
       });
@@ -89,18 +88,13 @@ function App() {
 
       return () => { unsubscribe(); };
     } catch (error) {
-      console.log("🫧 ~ file: App.tsx:102 ~ useEffect ~ error:->", error)
     }
   }, []);
 
   PushNotification.configure({
     onNotification: async function (notification: any) {
       if (notification.userInteraction) {
-        try {
-          const currentUrl = await AsyncStorage.getItem("WebViewURL") || "";
-        } catch (error) {
-          console.log("🫧 ~ file: App.tsx:117 ~ error:->", error)
-        }
+        // notification lgic
       }
       if (Platform.OS === 'ios') {
         notification.finish(PushNotificationIOS?.FetchResult?.NoData);

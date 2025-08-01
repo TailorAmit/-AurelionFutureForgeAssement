@@ -91,7 +91,6 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
     );
 
     const LikeButtonHandler = async (reviewId: string) => {
-        debugger
         await LikeReviewData(merchant?.merchant_id, reviewId)
     }
 
@@ -103,7 +102,6 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
         totalReviews: merchant?.total_review_count,
         breakdown: merchant?.rating_distribution,
     };
-    const myReview = merchant?.latest_reviews?.filter((item: any) => item?.review_id === route?.params?.item?.merchant_id || '')
 
     return (
         <View style={{ flex: 1, paddingTop: hasNotch ? Matrics.vs30 : 0, backgroundColor: '#fff' }}>
@@ -285,7 +283,6 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
                                         <FlatList
                                             data={reviews?.data || []}
                                             renderItem={({ item, index }) => {
-                                                console.log("item", item)
                                                 return <View>
                                                     <ReviewCard
                                                         name={item?.user_name}

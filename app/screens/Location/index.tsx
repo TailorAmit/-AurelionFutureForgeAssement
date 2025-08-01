@@ -40,10 +40,6 @@ export const SearchLocationScreen = ({ navigation }: { navigation: any }) => {
         setQuery(text);
     };
 
-    useEffect(() => {
-        console.log('query', query);
-    }, [query]);
-
     return (
         <View style={styles.container}>
             <CustomHeader

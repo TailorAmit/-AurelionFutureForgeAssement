@@ -1,6 +1,4 @@
 import 'react-native-url-polyfill/auto';
-import { Text, View } from 'react-native';
-import HomeScreen from '../../screens/Home';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AppNavScreens } from '~/app/constants/AppNavScreens';
 import { useMerchantActions } from '~/app/store/Action';
@@ -15,13 +13,10 @@ export const StackNavigation = () => {
     const { AutoLogin } = useMerchantActions();
 
     useEffect(() => {
-        AutoLogin()
-            .then(() => {
-                console.log('Merchant loaded');
-            })
-            .catch((err) => {
-                console.warn('Failed to load:', err);
-            });
+        const getAuthData = async () => {
+            await AutoLogin()
+        }
+        getAuthData()
     }, [])
     return (
         <Stack.Navigator

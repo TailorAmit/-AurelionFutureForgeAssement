@@ -3,15 +3,16 @@
 import axios from 'axios';
 import { useMerchantStore } from './store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { apiUrl } from '../constants/config';
+import { apiUrl, accssToken } from '../constants/config';
 
 export const useMerchantActions = () => {
     const set = useMerchantStore.setState;
+
     const fetchMerchantDetail = (limit: number, search?: string): Promise<void> => {
         return new Promise(async (resolve, reject) => {
             try {
                 set({ loading: true, error: null, success: false });
-                const accssToken = JSON.parse(await AsyncStorage.getItem('Logindetails') || '{}');
+                const accssToken = JSON.parse(await AsyncStorage.getItem('Logindetails') || '{}')?.token_data?.access_token || '';
 
                 let merchantUrl = 'https://admin.api.kittymagic.in/v1/app/merchant'
                 if (limit) {
@@ -24,7 +25,7 @@ export const useMerchantActions = () => {
                     axios.get(merchantUrl, {
                         headers: {
                             'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${accssToken?.token_data?.access_token || ''}`
+                            'Authorization': `Bearer ${accssToken}`
                         }
                     }),
                 ]);
@@ -79,7 +80,7 @@ export const useMerchantActions = () => {
                 set({ loading: true, error: null, success: false });
                 const [Logindetails] = await Promise.all([
                     axios.post(`https://admin.api.kittymagic.in/v1/dashboard/auth/login`, {
-                        "email": "tailoramit01007@gmail.com",
+                        "email": "rohanmessi@gmail.com",
                         "password": "testPassword",
                         "auth_type": "CREDENTIALS"
                     }, {
@@ -109,7 +110,7 @@ export const useMerchantActions = () => {
         return new Promise(async (resolve, reject) => {
             try {
                 set({ loading: true, error: null, success: false });
-                const accssToken = JSON.parse(await AsyncStorage.getItem('Logindetails') || '{}');
+                const accssToken = JSON.parse(await AsyncStorage.getItem('Logindetails') || '{}')?.token_data?.access_token || '';
                 let couponUrls = `https://admin.api.kittymagic.in/v1/app/merchant/${id}/coupons`
                 if (limit) {
                     couponUrls += `?limit=${limit}`
@@ -118,7 +119,7 @@ export const useMerchantActions = () => {
                     axios.get(couponUrls, {
                         headers: {
                             'Content-Type': 'application/json',
-                            'Authorization': `${accssToken?.token_data?.access_token || ''}`
+                            'Authorization': `${accssToken}`
                         }
                     }),
                 ]);
@@ -141,7 +142,7 @@ export const useMerchantActions = () => {
         return new Promise(async (resolve, reject) => {
             try {
                 set({ loading: true, error: null, success: false });
-                const accssToken = JSON.parse(await AsyncStorage.getItem('Logindetails') || '{}');
+                const accssToken = JSON.parse(await AsyncStorage.getItem('Logindetails') || '{}')?.token_data?.access_token || '';
 
                 let ReviewUrls = `https://admin.api.kittymagic.in/v1/app/merchant/${id}/reviews`
                 if (limit) {
@@ -152,7 +153,7 @@ export const useMerchantActions = () => {
                     axios.get(ReviewUrls, {
                         headers: {
                             'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${accssToken?.token_data?.access_token || ''}`
+                            'Authorization': `Bearer ${accssToken}`
                         }
                     }),
                 ]);
@@ -176,17 +177,24 @@ export const useMerchantActions = () => {
         return new Promise(async (resolve, reject) => {
             try {
                 set({ loading: true, error: null, success: false });
-                const accssToken = JSON.parse(await AsyncStorage.getItem('Logindetails') || '{}')?.token_data?.access_token || '';
+                // const accssToken = JSON.parse(await AsyncStorage.getItem('Logindetails') || '{}')?.token_data?.access_token || '';
+                const accssToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMGM2MmMyODAtMzQxNy00MTdjLTgwYzktYTFmNzM1ODA0MTMwIiwiaWF0IjoxNzU0MDUxODgxLCJleHAiOjE3NTQwNTQyODF9.tlmR4x_CMT_wfnIe_oK_SF6NKL8G2_6mt4s3dpmBfI8"
+
+                debugger
                 const [AddReviewRes] = await Promise.all([
-                    axios.post(`${apiUrl}/merchant/${id}/review`, {
-                        data: { ...data }
-                    }, {
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${accssToken}`
+                    axios.post(`https://admin.api.kittymagic.in/v1/app/merchant/${id}/review`, {
+                        "user_rating": data.user_rating,
+                        "user_review_text": data.user_review_text
+                    },
+                        {
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': "Bearer " + accssToken
+                            }
                         }
-                    }),
+                    ),
                 ]);
+                debugger
                 set({
                     reviews: AddReviewRes.data?.data || {},
                     loading: false,
@@ -197,6 +205,8 @@ export const useMerchantActions = () => {
             } catch (err: any) {
                 const message =
                     err.response?.data?.message || err.message || 'Something went wrong';
+                debugger
+
                 set({ loading: false, error: message?.error || message, success: false });
                 reject(message);
             }
@@ -261,13 +271,14 @@ export const useMerchantActions = () => {
         });
     };
 
-    const LikeReviewData = (data: any, id: any): Promise<void> => {
+    const LikeReviewData = (merchantiD: any, reviewId: any): Promise<void> => {
         return new Promise(async (resolve, reject) => {
             try {
                 set({ loading: true, error: null, success: false });
-                const accssToken = JSON.parse(await AsyncStorage.getItem('Logindetails') || '{}')?.token_data?.access_token || '';
+                // const accssToken = JSON.parse(await AsyncStorage.getItem('Logindetails') || '{}')?.token_data?.access_token || '';
+                // const accssToken = accssToken
                 const [ReviewRes] = await Promise.all([
-                    axios.get(`${apiUrl}/merchant/${id}`, {
+                    axios.get(`https://auth.api.kittymagic.in/v1/app/merchant/${merchantiD}/review/${reviewId}`, {
                         headers: {
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${accssToken}`

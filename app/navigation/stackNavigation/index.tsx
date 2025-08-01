@@ -1,3 +1,4 @@
+import 'react-native-url-polyfill/auto';
 import { Text, View } from 'react-native';
 import HomeScreen from '../../screens/Home';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -5,9 +6,11 @@ import { AppNavScreens } from '~/app/constants/AppNavScreens';
 import { useMerchantActions } from '~/app/store/Action';
 import { useEffect } from 'react';
 
+
 const Stack = createNativeStackNavigator();
 
 export const StackNavigation = () => {
+
 
     const { AutoLogin } = useMerchantActions();
 

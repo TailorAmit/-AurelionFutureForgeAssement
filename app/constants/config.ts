@@ -1,1 +1,2 @@
 export const apiUrl = "https://admin.api.kittymagic.in/v1/app";
+export const accssToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMGM2MmMyODAtMzQxNy00MTdjLTgwYzktYTFmNzM1ODA0MTMwIiwiaWF0IjoxNzU0MDQyNzQ2LCJleHAiOjE3NTQwNDUxNDZ9.gSqoT0xXoVPCHiTyoxISw4bWGQOcfTxLVJ-Qfu0HPtk"

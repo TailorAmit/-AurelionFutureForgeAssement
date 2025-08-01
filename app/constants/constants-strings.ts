@@ -7,6 +7,7 @@ interface CommonStringProps {
                 ADD_AND_EDIT_REVIEW: string
                 COUPON_DETAIL: string
                 REVIEW_DETAIL: string
+                NOT_FOUND: string
 
         };
         TAB_STRING: {
@@ -24,6 +25,7 @@ export const COMMON_STRING: CommonStringProps = {
                 ADD_AND_EDIT_REVIEW: 'AddReview',
                 COUPON_DETAIL: 'CouponDetail',
                 REVIEW_DETAIL: 'ReviewDetail',
+                NOT_FOUND: 'NotFound',
         },
         TAB_STRING: {
                 HOME: 'home',

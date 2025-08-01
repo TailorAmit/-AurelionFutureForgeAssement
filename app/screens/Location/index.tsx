@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -36,9 +36,16 @@ const history = [
 export const SearchLocationScreen = ({ navigation }: { navigation: any }) => {
     const [query, setQuery] = useState('');
 
+    const searchHandler = (text: string) => {
+        setQuery(text);
+    };
+
+    useEffect(() => {
+        console.log('query', query);
+    }, [query]);
+
     return (
         <View style={styles.container}>
-            {/* Header */}
             <CustomHeader
                 title="Search Location"
                 onBack={() => navigation.goBack()}
@@ -46,7 +53,7 @@ export const SearchLocationScreen = ({ navigation }: { navigation: any }) => {
             <ScrollView>
                 <View style={{ paddingHorizontal: 16 }}>
                     <View style={{ paddingTop: 20 }}>
-                        <SearchBar value={query} onChangeText={setQuery} />
+                        <SearchBar placeholder="Search Location" value={query} onDebouncedChange={(text) => searchHandler(text)} />
                     </View>
 
                     {/* Use Current Location */}

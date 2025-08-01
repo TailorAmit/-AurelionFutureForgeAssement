@@ -17,6 +17,7 @@ interface ReviewCardProps {
     likeCount?: number;
     onEdit?: () => void;
     onDelete?: () => void;
+    LikeButtonHandler?: () => void;
 }
 
 const ReviewCard: React.FC<ReviewCardProps> = ({
@@ -29,6 +30,7 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
     likeCount = 0,
     onEdit,
     onDelete,
+    LikeButtonHandler
 }) => {
     return (
         <View style={[styles.card, isUserReview && styles.cardWithBorder]}>
@@ -56,10 +58,10 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
                         </TouchableOpacity>
                     </View>
                 ) : (
-                    <View style={styles.likeRow}>
+                    <TouchableOpacity style={styles.likeRow} onPress={() => LikeButtonHandler()}>
                         <Text style={styles.likeCount}>{likeCount}</Text>
                         <ThumbsUp size={20} color="#e91e63" />
-                    </View>
+                    </TouchableOpacity>
                 )}
             </View>
 

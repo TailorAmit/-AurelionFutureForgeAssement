@@ -6,6 +6,7 @@ import { RestaurantDetailScreen } from "@screens/RestaurantDetailScreen";
 import AddAndEditReviewScreen from "@screens/Review";
 import { CouponScreen } from "@screens/Coupons";
 import { RattingListScreen } from "@screens/Review/ReviewList";
+import { NotFoundScreen } from "@screens/Not_found";
 
 export const AppNavScreens = [
 
@@ -32,6 +33,10 @@ export const AppNavScreens = [
     {
         name: COMMON_STRING.STACK_STRING.REVIEW_DETAIL,
         component: RattingListScreen,
+    },
+    {
+        name: COMMON_STRING.STACK_STRING.NOT_FOUND,
+        component: NotFoundScreen,
     },
 ];
 

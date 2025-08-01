@@ -1,4 +1,4 @@
-import { Alert, PermissionsAndroid, Platform } from 'react-native';
+import { Alert, PermissionsAndroid, Platform, Text } from 'react-native';
 // import { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { StackNavigation } from './app/navigation/stackNavigation';
@@ -10,6 +10,16 @@ import PushNotification from 'react-native-push-notification';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import { useEffect } from 'react';
 
+
+const linking = {
+  prefixes: ['kittymagic://', 'https://kittymagic.app'],
+  config: {
+    screens: {
+      MerchantDetail: 'ResturantDetail/:slug',
+      NotFound: '*',
+    },
+  },
+};
 function App() {
 
   // ----------------- get FCM Token-------------------//
@@ -18,10 +28,9 @@ function App() {
     const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
     if (enabled) {
       const fcmToken = await messaging().getToken()
-      console.log("fcmToken", fcmToken);
       await AsyncStorage.setItem("fcmToken", JSON.stringify(fcmToken));
     } else {
-      Alert.alert('Not enabled to get token', 'error');
+      // Alert.alert('Not enabled to get token', 'error');
     }
   };
 
@@ -106,9 +115,11 @@ function App() {
     requestPermissions: true,
   });
 
+
+
   return (
     <SafeAreaProvider >
-      <NavigationContainer  >
+      <NavigationContainer Linking={linking} fallback={<Text>Loading...</Text>}>
         <StackNavigation />
       </NavigationContainer>
     </SafeAreaProvider>

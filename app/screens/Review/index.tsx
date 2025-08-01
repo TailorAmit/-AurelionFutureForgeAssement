@@ -22,7 +22,7 @@ const AddAndEditReviewScreen = ({ navigation, route }: any) => {
     const [errors, setErrors] = useState<string[]>([]);
     const [deleteReviewModal, showDeleteReviewModal] = useState(false)
 
-    const merchant_id = route?.params?.merchant_id
+    const merchant = route?.params?.merchant
     const ReviewId = route?.params?.ReviewId
 
     const maxChars = 500;
@@ -36,7 +36,10 @@ const AddAndEditReviewScreen = ({ navigation, route }: any) => {
             setErrors(['Please Enter a Review']);
             return;
         }
-        await AddReviewData({ user_rating: rating, user_review_text: review }, merchant_id);
+        const data = {
+            user_rating: rating, user_review_text: review
+        }
+        await AddReviewData(data, merchant?.merchant_id);
         navigation.goBack();
     };
 

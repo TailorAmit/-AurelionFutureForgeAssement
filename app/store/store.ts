@@ -14,6 +14,22 @@ export type Meta = {
         total_coupons?: string
     }
 }
+
+export type Outlet = {
+    review_id: string;
+    user_id: string;
+    user_name: string;
+    user_profile_url: string;
+    user_email: string;
+    user_rating: string;
+    user_review_text: string;
+    _count: {
+        review_count: number
+    },
+    updated_at: string;
+    is_liked_by_user: boolean
+}
+
 export type ReviewItems = {
     review_id: string;
     user_id: string;
@@ -113,6 +129,7 @@ export type Logindetails = {
 type MerchantStore = {
     merchants: Merchant | null;
     merchant: Merchant | null;
+    outlets: Outlet | null;
     Coupens: Coupens | null;
     Logindetails: Logindetails | null;
     reviews: Review;
@@ -128,6 +145,7 @@ export const useMerchantStore = create<MerchantStore>(() => ({
     merchant: null,
     Logindetails: null,
     Coupens: null,
+    outlets: null,
     reviews: {
         data: [],
         meta: {

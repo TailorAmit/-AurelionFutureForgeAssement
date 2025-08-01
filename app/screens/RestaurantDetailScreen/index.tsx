@@ -39,10 +39,17 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
     const [deleteReviewModal, showDeleteReviewModal] = useState(false)
     const [deletedModuleId, setDeletedModuleId] = useState(false)
 
-    const { loading, error, merchant, Coupens, reviews } = useMerchantStore();
-    const { fetchbyidMerchantDetail, fetchbyidMerchantCouponsData, fetchbyidMerchantReviewData, DeleteReviewData } = useMerchantActions();
+    const [merchant_id, setMerchantId] = useState(route?.params?.item?.merchant_id || '')
 
-    const merchant_id = route?.params?.item?.merchant_id || ''
+    const { loading, error, merchant, Coupens, reviews } = useMerchantStore();
+    const { fetchbyidMerchantDetail, fetchbyidMerchantCouponsData, fetchbyidMerchantReviewData, DeleteReviewData, LikeReviewData } = useMerchantActions();
+
+    const { slug } = route.params;
+
+
+    useEffect(() => {
+        setMerchantId(merchant_id)
+    }, [slug])
 
     const openMaps = (outletLocation: string) => {
         const url = Platform.select({
@@ -74,6 +81,19 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
             };
         }, [])
     );
+
+    useFocusEffect(
+        React.useCallback(() => {
+            callDetailsApi(merchant_id)
+            return () => {
+            };
+        }, [merchant_id])
+    );
+
+    const LikeButtonHandler = async (reviewId: string) => {
+        debugger
+        await LikeReviewData(merchant?.merchant_id, reviewId)
+    }
 
 
     const category = merchant?.category?.map((item: any) => item?.category_name).join(', ');
@@ -219,7 +239,7 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
                                     <View style={[styles.headerRow, { marginTop: 20 }]}>
                                         <Text style={styles.title}>Ratings and Reviews</Text>
                                         <TouchableOpacity onPress={() => navigation.navigate(COMMON_STRING.STACK_STRING.ADD_AND_EDIT_REVIEW, {
-                                            merchant_id: merchant?.merchant_id
+                                            merchant: merchant
                                         })}>
                                             <Text style={styles.addReview}>Add Review</Text>
                                         </TouchableOpacity>
@@ -265,6 +285,7 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
                                         <FlatList
                                             data={reviews?.data || []}
                                             renderItem={({ item, index }) => {
+                                                console.log("item", item)
                                                 return <View>
                                                     <ReviewCard
                                                         name={item?.user_name}
@@ -272,6 +293,7 @@ export const RestaurantDetailScreen = ({ navigation, route }: any) => {
                                                         rating={item?.user_rating}
                                                         review={item?.user_review_text}
                                                         isVerified
+                                                        LikeButtonHandler={() => LikeButtonHandler(item?.review_id)}
                                                         likeCount={23}
                                                     />
                                                     {reviews?.data?.length - 1 !== index &&

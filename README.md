@@ -1,97 +1,72 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+Aurelion Future Forge Assessment
 
-# Getting Started
+This is the official React Native project for the Aurelion Future Forge Assessment.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+🚀 Getting Started
 
-## Step 1: Start Metro
+Follow the steps below to set up and run the project locally.
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+📦 Step 1: Clone the Repository
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+git clone https://github.com/TailorAmit/-AurelionFutureForgeAssement.git
+cd -AurelionFutureForgeAssement
 
-```sh
-# Using npm
-npm start
+📥 Step 2: Install Dependencies
 
-# OR using Yarn
-yarn start
-```
+npm install --legacy-peer-deps
 
-## Step 2: Build and run your app
+🍎 Step 3: Install iOS Pods
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+cd ios
+pod install
 
-### Android
+⚙️ Step 4: Configure API and Token
 
-```sh
-# Using npm
-npm run android
+Open the project in any code editor and go to:
 
-# OR using Yarn
-yarn android
-```
+app/constants/config.ts
 
-### iOS
+Update the file with the correct API base URL and access token.
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+▶️ Step 5: Run the Project
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+For iOS:
 
-```sh
-bundle install
-```
+npx react-native run-ios
 
-Then, and every time you update your native dependencies, run:
+For Android:
 
-```sh
-bundle exec pod install
-```
+npx react-native run-android
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+🛠 Tech Stack
 
-```sh
-# Using npm
-npm run ios
+React Native
 
-# OR using Yarn
-yarn ios
-```
+TypeScript
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+Zustand (for state management)
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+Axios (for API requests)
 
-## Step 3: Modify your app
+Lucide Icons
 
-Now that you have successfully run the app, let's make changes!
+📂 Project Structure
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+- app/
+  - components/
+  - screens/
+  - constants/
+    - config.ts ← API URL & Token configuration
+  - store/
+  - ...
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+📌 Notes
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+Make sure you have Xcode and CocoaPods installed for iOS development.
 
-## Congratulations! :tada:
+Use a properly configured emulator or physical device for Android builds.
 
-You've successfully run and modified your React Native App. :partying_face:
+👨‍💻 Author
 
-### Now what?
+Amit TailorGitHub: TailorAmit
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
